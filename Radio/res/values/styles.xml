@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppBaseTheme" parent="@*android:style/Theme.Light" />
-    <style name="AppTheme" parent="@style/AppBaseTheme" />
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+        <item name="android:colorBackground">#2196F3</item>
+        <item name="android:textColorPrimary">#212121</item>
+    </style>
+    <style name="radio_button_preset" parent="AppTheme">
+        <item name="android:layout_height">@dimen/radio_button_preset_height</item>
+        <item name="android:layout_width">@dimen/radio_button_preset_width</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">@dimen/radio_preset_text_size</item>
+        <item name="android:background">@drawable/btnchannel</item>
+        <item name="android:layout_marginBottom">@dimen/radio_preset_bottom_margin</item>
+        <item name="android:layout_marginRight">@dimen/radio_preset_right_margin</item>
+    </style>
 </resources>

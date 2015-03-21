@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="activity_horizontal_margin">16.0dip</dimen>
     <dimen name="activity_vertical_margin">16.0dip</dimen>
+    <dimen name="activity_horizontal_margin">128.0dip</dimen>
+    <dimen name="display_bar_horizontal_margin">120.0dip</dimen>
+    <dimen name="display_bar_buttons_vertical_margin">48.0dip</dimen>
+    <dimen name="display_bar_buttons_horizontal_margin">24.0dip</dimen>
+    <dimen name="freq_display_width">500.0dip</dimen>
+    <dimen name="control_bar_width">220.0dip</dimen>
+    <dimen name="display_bar_height">140dip</dimen>
+    <dimen name="radio_button_preset_height">97.0dip</dimen>
+    <dimen name="radio_button_preset_width">268.0dip</dimen>
+    <dimen name="radio_preset_bottom_margin">4.0dip</dimen>
+    <dimen name="radio_preset_right_margin">2.0dip</dimen>
+    <dimen name="radio_preset_text_size">28.0sp</dimen>
 </resources>

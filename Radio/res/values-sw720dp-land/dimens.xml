@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="activity_horizontal_margin">128.0dip</dimen>
+    <dimen name="display_bar_horizontal_margin">120.0dip</dimen>
+    <dimen name="display_bar_buttons_vertical_margin">48.0dip</dimen>
 </resources>
