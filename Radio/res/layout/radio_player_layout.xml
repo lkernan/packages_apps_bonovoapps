@@ -1,103 +1,309 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content"
+<LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="fill_parent"
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <RelativeLayout android:id="@id/radio_middle_layout" android:background="@drawable/bg" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.15">
-        <ImageButton android:id="@id/btnclose" android:background="@drawable/btnclose" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_alignParentRight="true" />
-        <ImageButton android:id="@id/btnbackward" android:background="@drawable/btnfinebackward" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="102.0dip" android:layout_marginTop="90.0dip" />
-        <ImageButton android:id="@id/btnforward" android:background="@drawable/btnfineforward" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="829.0dip" android:layout_marginTop="90.0dip" />
-        <TextView android:textSize="30.0sp" android:textColor="@color/solid_white" android:id="@id/radiotype" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="288.0dip" android:layout_marginTop="133.0dip" />
-        <TextView android:textSize="30.0sp" android:textColor="@color/solid_white" android:id="@id/radiohz" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="376.0dip" android:layout_alignLeft="@id/radiotype" android:layout_alignTop="@id/radiotype" />
-        <TextView android:textSize="20.0sp" android:textColor="@color/solid_white" android:id="@id/channeldetails" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="175.0dip" android:layout_centerHorizontal="true" />
-        <RelativeLayout android:gravity="center" android:layout_width="208.0dip" android:layout_height="66.0dip" android:layout_marginLeft="408.0dip" android:layout_marginTop="99.0dip">
-            <ImageView android:id="@id/number1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
-            <ImageView android:id="@id/number2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/number1" android:layout_alignTop="@id/number1" />
-            <ImageView android:id="@id/number3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/number2" android:layout_alignTop="@id/number1" />
-            <ImageView android:id="@id/number4" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/point" android:layout_toRightOf="@id/number3" android:layout_alignTop="@id/number1" />
-            <ImageView android:id="@id/number5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/number4" android:layout_alignTop="@id/number1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight=".6"
+        android:background="#ff2196f3">
+
+        <ImageButton android:id="@id/btnbackward" android:background="@drawable/btnfinebackward" android:layout_width="@dimen/tune_button_width" android:layout_height="@dimen/tune_button_height"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/tune_button_outer_margin"
+            android:layout_marginRight="@dimen/tune_button_inner_margin" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <TextView android:textSize="@dimen/radio_text_size" android:textColor="@color/solid_white" android:id="@id/radiotype" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Type"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/tune_button_inner_margin"
+                    android:gravity="top" />
+
+                <TextView android:textSize="@dimen/radio_text_size" android:textColor="@color/solid_white" android:id="@id/radiohz" android:layout_width="wrap_content" android:layout_height="fill_parent"
+                    android:layout_alignLeft="@id/radiotype" android:layout_alignTop="@id/radiotype"
+                    android:text="Hertz"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="false"
+                    android:layout_marginBottom="@dimen/tune_button_inner_margin"
+                    android:gravity="bottom" />
+            </LinearLayout>
+
+            <TextView android:textSize="@dimen/radio_text_size" android:textColor="@color/solid_white" android:id="@id/channeldetails" android:layout_width="fill_parent" android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="ChanelDetails"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_horizontal" />
+
+            <RelativeLayout android:gravity="center" android:layout_width="match_parent" android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/tune_button_outer_margin">
+                <ImageView android:id="@id/number1" android:layout_width="@dimen/freq_display_width" android:layout_height="@dimen/freq_display_height"
+                    android:background="@drawable/number1" />
+                <ImageView android:id="@id/number2" android:layout_width="@dimen/freq_display_width" android:layout_height="@dimen/freq_display_height" android:layout_toRightOf="@id/number1" android:layout_alignTop="@id/number1"
+                    android:background="@drawable/number0" />
+                <ImageView android:id="@id/number3" android:layout_width="@dimen/freq_display_width" android:layout_height="@dimen/freq_display_height" android:layout_toRightOf="@id/number2" android:layout_alignTop="@id/number1"
+                    android:background="@drawable/number4" />
+                <ImageView android:id="@id/number4" android:visibility="visible" android:layout_width="@dimen/freq_display_point_width" android:layout_height="@dimen/freq_display_height" android:src="@drawable/point" android:layout_toRightOf="@id/number3" android:layout_alignTop="@id/number1" />
+                <ImageView android:id="@id/number5" android:layout_width="@dimen/freq_display_width" android:layout_height="@dimen/freq_display_height" android:layout_toRightOf="@id/number4" android:layout_alignTop="@id/number1"
+                    android:background="@drawable/number9" />
+            </RelativeLayout>
         </RelativeLayout>
-        <Button android:textSize="28.0sp" android:textColor="@color/solid_white" android:gravity="center" android:id="@id/btnfine" android:background="@drawable/btnfine" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="279.0dip" android:layout_marginTop="232.0dip" android:text="@string/fine" />
-        <Button android:textSize="28.0sp" android:textColor="@color/solid_white" android:id="@id/btnstep" android:background="@drawable/btnfine" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="175.0dip" android:text="@string/step" android:layout_alignLeft="@id/btnfine" android:layout_alignTop="@id/btnfine" />
-        <Button android:textSize="28.0sp" android:textColor="@color/solid_white" android:id="@id/btnauto" android:background="@drawable/btnfine" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="175.0dip" android:text="@string/auto" android:layout_alignLeft="@id/btnstep" android:layout_alignTop="@id/btnstep" />
-        <Button android:id="@id/btnheart" android:background="@drawable/btncollect_heart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="175.0dip" android:layout_alignLeft="@id/btnauto" android:layout_alignBottom="@id/btnauto" />
-        <Button android:id="@id/btnclear" android:background="@drawable/btnclear" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="91.0dip" android:layout_alignLeft="@id/btnheart" android:layout_alignBottom="@id/btnheart" />
-        <Button android:id="@id/btnfm1" android:background="@drawable/btnbottom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:layout_marginTop="282.0dip" />
-        <Button android:id="@id/btnam" android:background="@drawable/btnbottonam" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:layout_marginTop="349.0dip" />
-        <Button android:id="@id/btnsetting" android:background="@drawable/setting" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="2.0dip" android:layout_marginTop="416.0dip" />
-        <HorizontalScrollView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="231.0dip" android:layout_marginTop="280.0dip">
-            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel0" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel1" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel2" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel3" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+
+        <ImageButton android:id="@id/btnforward" android:background="@drawable/btnfineforward" android:layout_width="@dimen/tune_button_width" android:layout_height="@dimen/tune_button_height"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/tune_button_outer_margin"
+            android:layout_marginLeft="@dimen/tune_button_inner_margin" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_button_height"
+        android:background="#ff9e9e9e"
+        android:gravity="center">
+
+        <Button android:gravity="center" android:id="@+id/btnheart" android:background="@drawable/btncollect_heart" android:layout_width="@dimen/toolbar_button_width" android:layout_height="@dimen/toolbar_button_height"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/tune_button_inner_margin" />
+
+        <Button android:id="@id/btnsave" android:background="@drawable/btncollect_save" android:layout_width="@dimen/toolbar_button_width" android:layout_height="@dimen/toolbar_button_height"
+            android:layout_alignLeft="@+id/btnheart" android:layout_alignBottom="@+id/btnheart"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/tune_button_inner_margin" />
+
+        <Button android:id="@id/btnclear" android:background="@drawable/btnclear" android:layout_width="@dimen/toolbar_button_width" android:layout_height="@dimen/toolbar_button_height"
+            android:layout_alignLeft="@+id/btnheart" android:layout_alignBottom="@+id/btnheart"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/tune_button_inner_margin" />
+
+        <Button
+            android:id="@id/btnauto"
+            android:layout_width="@dimen/toolbar_button_width" android:layout_height="@dimen/toolbar_button_height"
+            android:layout_alignLeft="@+id/btnheart" android:layout_alignTop="@+id/btnheart"
+            android:layout_margin="@dimen/tune_button_inner_margin"
+            android:background="@drawable/search_button" />
+
+        <ImageButton android:id="@id/btnclose" android:background="@drawable/btnclose" android:layout_width="@dimen/toolbar_button_width" android:layout_height="@dimen/toolbar_button_height" android:layout_alignParentTop="true" android:layout_alignParentRight="true"
+            android:layout_margin="@dimen/tune_button_inner_margin" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight=".4">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="#ff9e9e9e">
+
+            <Button android:id="@id/btnfm1" android:background="@drawable/btnbottom" android:layout_width="@dimen/sidebar_width" android:layout_height="@dimen/sidebar_height"
+                android:clickable="false" />
+
+            <Button android:id="@id/btnam" android:background="@drawable/btnbottonam" android:layout_width="@dimen/sidebar_width" android:layout_height="@dimen/sidebar_height" />
+
+            <Button android:id="@id/collect" android:background="@drawable/fav_button" android:layout_width="@dimen/sidebar_width" android:layout_height="@dimen/sidebar_height"
+                android:text="FAV"
+                android:textAlignment="viewEnd"
+                android:textSize="@dimen/radio_text_size"
+                android:textColor="@color/solid_white" />
+
+            <Button android:id="@id/btnsetting" android:background="@drawable/setting" android:layout_width="@dimen/sidebar_width" android:layout_height="@dimen/sidebar_height" />
+        </LinearLayout>
+
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="match_parent"
+            android:fillViewport="false"
+            android:background="#ff9e9e9e"
+            android:transitionGroup="false">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="fill_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel0" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel1" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel2" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel3" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel4" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel5" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel6" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel7" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel4" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel5" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel6" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel7" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel8" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel9" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel10" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel11" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel8" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel9" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel10" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel11" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel12" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel13" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel14" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel15" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel12" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel13" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel14" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel15" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel16" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel17" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel18" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel19" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel16" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel17" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel18" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel19" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel20" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel21" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel22" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel23" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel20" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel21" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel22" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel23" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel24" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="5.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel25" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel26" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel27" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel24" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel25" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel26" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel27" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel28" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel29" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel30" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel31" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel28" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel29" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel30" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel31" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel32" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel33" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel34" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="7.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel35" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel32" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel33" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel34" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel35" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel36" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel37" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel38" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel39" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel36" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel37" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel38" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel39" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel40" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel41" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel42" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel43" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel40" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel41" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel42" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel43" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
-                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginTop="0.0dip">
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel44" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel45" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel46" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
-                    <Button android:textSize="25.0sp" android:textColor="@color/solid_white" android:id="@id/channel47" android:background="@drawable/btnchannel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginTop="2.0dip" android:maxLength="7" />
+                <LinearLayout android:orientation="vertical" android:layout_width="wrap_content" android:layout_height="match_parent">
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel44" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel45" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel46" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
+                    <Button android:textSize="17.0sp" android:textColor="@color/solid_white" android:id="@id/channel47" android:background="@drawable/btnchannel" android:layout_width="@dimen/preset_width" android:layout_height="@dimen/preset_height"
+                        android:maxLength="7"
+                        android:layout_weight="1" />
                 </LinearLayout>
             </LinearLayout>
         </HorizontalScrollView>
-    </RelativeLayout>
+    </LinearLayout>
+
 </LinearLayout>

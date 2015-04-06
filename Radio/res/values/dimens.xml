@@ -2,4 +2,19 @@
 <resources>
     <dimen name="activity_horizontal_margin">16.0dip</dimen>
     <dimen name="activity_vertical_margin">16.0dip</dimen>
+    <dimen name="tune_button_width">100dp</dimen>
+    <dimen name="tune_button_height">100dp</dimen>
+    <dimen name="tune_button_outer_margin">80dp</dimen>
+    <dimen name="tune_button_inner_margin">20dp</dimen>
+    <dimen name="freq_display_height">84dp</dimen><dimen
+    <dimen name="freq_display_width">84dp</dimen>
+    <dimen name="freq_display_point_width">36dp</dimen>
+    <dimen name="radio_text_size">42sp</dimen>
+    <dimen name="toolbar_button_width">60dp</dimen>
+    <dimen name="toolbar_button_height">60dp</dimen>
+    <dimen name="preset_width">270dp</dimen>
+    <dimen name="preset_height">76dp</dimen>
+    <dimen name="sidebar_height">97dp</dimen>
+    <dimen name="sidebar_width">240dp</dimen>
+
 </resources>
