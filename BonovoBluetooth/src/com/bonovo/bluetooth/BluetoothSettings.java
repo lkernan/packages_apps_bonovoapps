@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -25,12 +24,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.ToggleButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
-import android.widget.Switch;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.media.AudioManager;
@@ -39,39 +38,27 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 
 	private final static String TAG = "BluetoothSettings";
 	private final static boolean DEBUG = false;
-    private boolean mIsSyncPhoneBook = false;
 	private ViewStub mStubBtSettings = null;
 	private ViewStub mStubBtMusic = null;
 	private Button mBtnPhone = null;
-	private Button mBtnMusic = null;
-	private Button mBtnSettings = null;
-	private Button mBtnSyncContacts = null;
 	private ImageButton mIgeBtnVolUp = null;
 	private ImageButton mIgeBtnVolDown = null;
 	
-	//private Button mBtnBtPower = null; 	//0718 删除
+	//private Button mBtnBtPower = null; 	//0718 删锟斤拷
 	private TextView mTvBtNameInfo = null;
 	private TextView mTvBtName = null;
 	private TextView mTvBtPinInfo = null;
 	private TextView mTvBtPin = null;
 	private TextView mTvBtStatus = null;
 	private TextView mTvBtHFPStatus = null;
-	private ImageView mIgeBtStatus = null;
 	private TextView mBtnName = null;       //0825
 	private TextView mBtnMusicName = null;  //0825
 	
-	private Button mBtnMusicPre = null;
-	private Button mBtnMusicPlay = null;
-	private Button mBtnMusicPause = null;
-	private Button mBtnMusicStop = null;
-	private Button mBtnMusicNext = null;
-	private MySwitch mSwBtPower = null;      //0718 新加
-	private MySwitch mSwMusic = null;	 //0820 修改
+	private ToggleButton mSwBtPower = null;      //0718 锟铰硷拷
+	private ToggleButton mSwMusic = null;	 //0820 锟睫革拷
 	private Context mContext = null;
 	
 	private static BonovoBlueToothService mBtService = null;
-	private ProgressDialog mBluetoothContactsDialog;
-	private static final int DIALOG_SYNC_CONTACTS = 1;
 	
 	private static final int MSG_SYNC_CONTACTS_COMPLETE = 1;
 	private static final int MSG_UPDATA_BT_NAME = 2; // update name message id
@@ -89,27 +76,17 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bluetooth);
 		mContext = this;
-		
-		mStubBtMusic = (ViewStub)findViewById(R.id.stubMusic);
-		mStubBtMusic.inflate();
-		mStubBtMusic.setVisibility(View.GONE);
-		
+			
 		mStubBtSettings = (ViewStub)findViewById(R.id.stubSettings);
 		mStubBtSettings.inflate();
 		mStubBtSettings.setVisibility(View.VISIBLE);
 		
 		// bottom buttons
 		mBtnPhone = (Button)findViewById(R.id.btnPhone);
-		mBtnMusic = (Button)findViewById(R.id.btnMusic);
-		mBtnSettings = (Button)findViewById(R.id.btnSettings);
-		mBtnSyncContacts = (Button)findViewById(R.id.btnSyncContacts);
 		mIgeBtnVolUp = (ImageButton)findViewById(R.id.btnVolAdd);
 		mIgeBtnVolDown = (ImageButton)findViewById(R.id.btnVolDown);
 		
 		mBtnPhone.setOnClickListener(this);
-		mBtnMusic.setOnClickListener(this);
-		mBtnSettings.setOnClickListener(this);
-		mBtnSyncContacts.setOnClickListener(this);
 		mIgeBtnVolUp.setOnClickListener(this);
 		mIgeBtnVolDown.setOnClickListener(this);
 		
@@ -129,39 +106,13 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 		mTvBtNameInfo.setOnLongClickListener(this);
 		mTvBtPin.setOnLongClickListener(this);
 		mTvBtPinInfo.setOnLongClickListener(this);
-		
-		mIgeBtStatus = (ImageView)findViewById(R.id.imageViewBlueToothStatus);
-		
-		//bt music's module
-		mBtnMusicPre = (Button)findViewById(R.id.buttonBluetoothMusicPre);
-		mBtnMusicPlay = (Button)findViewById(R.id.buttonBluetoothMusicPlay);
-		mBtnMusicPause = (Button)findViewById(R.id.buttonBluetoothMusicPause);
-		mBtnMusicStop = (Button)findViewById(R.id.buttonBluetoothMusicStop);
-		mBtnMusicNext = (Button)findViewById(R.id.buttonBluetoothMusicNext);
-		
-		mBtnMusicPre.setOnClickListener(this);
-		mBtnMusicPlay.setOnClickListener(this);
-		mBtnMusicPause.setOnClickListener(this);
-		mBtnMusicStop.setOnClickListener(this);
-		mBtnMusicNext.setOnClickListener(this);
-		
-		
-		//-------------------------------------------------------------------------------------------------------
-		//下面的代码是为了保持蓝牙界面风格的一致性而设计添加的；
-		//将原来用Button表示的蓝牙开关改为用Switch表示；
-		//Switch是一个可以在两种状态切换的开关控件；
-		//通过实现CompoundButton.OnCheckedChangeListener接口，并实现其内部类的onCheckedChanged来监听状态变化；
-		//然后再进行判断；
-		// 1.当switch处于选中状态时，只有蓝牙开关状态mTvBtStatus不可见，其他均设置为可见；
-		// 2.当switch处于未选中状态时，只有蓝牙开关状态mTvBtStatus可见，其他均设置为不可见。
-		// 3.修改完善官方Switch控件（详见MySwitch内的代码）。增加了2项小功能：
-		// 1）支持用Track背景图片的方式代替Texton Textoff等文字方式表现开关状态
-		// 2）支持调整控制Switch的高度
-		//  ——swxia. Date:20140825.
-		// ------------------------------------------------------------------------------------------------------  
-		
-		mSwBtPower = (MySwitch)findViewById(R.id.swBtStatus);	
-		mSwBtPower.setChecked(false);
+				
+		mSwBtPower = (ToggleButton)findViewById(R.id.swBtStatus);
+		try {
+			mSwBtPower.setChecked(mBtService.getBtSwitchStatus());
+		} catch(Exception ex) {
+			mSwBtPower.setChecked(false);
+		}
 		mSwBtPower.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
@@ -175,10 +126,9 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 				boolean hfpStatus = mBtService.getBtHFPStatus();
 				//	mSwBtPower.setText(powerStatus ? R.string.setting_button_bluetooth_status_closed : R.string.setting_button_bluetooth_status_open);						
 				mTvBtStatus.setText(powerStatus ? R.string.bluetooth_status_opened : R.string.bluetooth_status_closed);
-				mIgeBtStatus.setImageResource(powerStatus ? R.drawable.setting_bluetooth_opened : R.drawable.setting_bluetooth_close);
 				mTvBtHFPStatus.setText(hfpStatus ? R.string.phone_link_status_opened : R.string.phone_link_status_closed);
 				if(isChecked){
-					//选中时所做的操作
+					//选锟斤拷时锟斤拷锟斤拷锟侥诧拷锟斤拷
 					mTvBtName.setVisibility(View.VISIBLE);
 					mTvBtPin.setVisibility(View.VISIBLE);
 					mTvBtNameInfo.setText(mBtService.getBtName());
@@ -191,7 +141,7 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 					mBtnMusicName.setVisibility(View.VISIBLE);//0825
 					
 				}else{
-					//未选中时所做的操作
+					//未选锟斤拷时锟斤拷锟斤拷锟侥诧拷锟斤拷
 					mTvBtName.setVisibility(View.GONE);
 					mTvBtPin.setVisibility(View.GONE);
 					mTvBtNameInfo.setVisibility(View.GONE);
@@ -205,21 +155,21 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 		});
 		
 		
-		mSwMusic = (MySwitch)findViewById(R.id.swBtMusic);
-	    mSwMusic.setChecked(false);
+		mSwMusic = (ToggleButton)findViewById(R.id.swBtMusic);
+		try {
+			mSwMusic.setChecked(mBtService.getMusicServiceEnable());
+		} catch(Exception ex) {
+			mSwMusic.setChecked(false);
+		}
         mSwMusic.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
-			@Override
-			
-					
+			@Override			
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-				if(isChecked){
-					mBtnMusic.setVisibility(View.VISIBLE);
+				if(isChecked){			
 					if(mBtService != null){
 						mBtService.setMusicServiceEnable(true);
 					}
 				}else{
-					mBtnMusic.setVisibility(View.GONE);
 					if(mBtService != null){
 						mBtService.setMusicServiceEnable(false);
 					}
@@ -279,14 +229,10 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
             mSwBtPower.setChecked(powerStatus);
 			//	mBtnBtPower.setText(powerStatus ? R.string.setting_button_bluetooth_status_closed : R.string.setting_button_bluetooth_status_open);
 			mTvBtStatus.setText(powerStatus ? R.string.bluetooth_status_opened : R.string.bluetooth_status_closed);
-			mIgeBtStatus.setImageResource(powerStatus ? R.drawable.setting_bluetooth_opened : R.drawable.setting_bluetooth_close);
 			mTvBtHFPStatus.setText(hfpStatus ? R.string.phone_link_status_opened : R.string.phone_link_status_closed);
 			mTvBtNameInfo.setText(mBtService.getBtName());
 			mTvBtPinInfo.setText(mBtService.getBtPinCode());
 			
-			boolean musicStatus = mBtService.getMusicStatus();
-			mBtnMusicPlay.setVisibility(musicStatus ? View.INVISIBLE : View.VISIBLE);
-			mBtnMusicPause.setVisibility(musicStatus ? View.VISIBLE : View.INVISIBLE);
 		}
 	};
 
@@ -322,45 +268,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 					boolean hfpStatus = mBtService.getBtHFPStatus();
 					mTvBtHFPStatus.setText(hfpStatus ? R.string.phone_link_status_opened : R.string.phone_link_status_closed);
 				}
-			}else if(BonovoBlueToothData.ACTION_DATA_MAMB_CHANGED.equals(action)){
-                boolean musicStatus = false;
-                if(mBtService != null){
-				    musicStatus = mBtService.getMusicStatus();
-			    }
-				mBtnMusicPlay.setVisibility(musicStatus ? View.INVISIBLE : View.VISIBLE);
-				mBtnMusicPause.setVisibility(musicStatus ? View.VISIBLE : View.INVISIBLE);
-			}else if(BonovoBlueToothData.ACTION_SYNC_CONTACTS_COMPLETE.equals(action)){
-                if(mBluetoothContactsDialog == null){
-                    showDialog(DIALOG_SYNC_CONTACTS);
-                }
-                mBluetoothContactsDialog.setMessage(mContext.getString(R.string.description_sync_contacts_complete));
-				mHandler.sendEmptyMessageDelayed(MSG_SYNC_CONTACTS_COMPLETE, DELAY_TIME_READ);
-            }else if(BonovoBlueToothData.ACTION_SYNC_CONTACTS_READ_COUNT.equals(action)){
-                if(mBluetoothContactsDialog == null){
-                    showDialog(DIALOG_SYNC_CONTACTS);
-                }
-                int count = intent.getIntExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, 0);
-                String info = mContext.getString(R.string.description_reading_contacts_info) + " " + count;
-                mBluetoothContactsDialog.setMessage(info);
-            }else if(BonovoBlueToothData.ACTION_SYNC_CONTACTS_WRITE_DATABASE.equals(action)){
-                if(mBluetoothContactsDialog == null){
-                    showDialog(DIALOG_SYNC_CONTACTS);
-                }
-				int count = intent.getIntExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, 0);
-                mBluetoothContactsDialog.setMessage(mContext.getString(R.string.description_writing_contacts_info));
-            }else if(BonovoBlueToothData.ACTION_SYNC_CONTACTS_TIMEOUT.equals(action)){
-                if(mBluetoothContactsDialog == null){
-                    showDialog(DIALOG_SYNC_CONTACTS);
-                }
-				int count = intent.getIntExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, 0);
-                String info = mContext.getString(R.string.description_sync_contacts_error) + count;
-                mBluetoothContactsDialog.setMessage(info);
-			}else if(BonovoBlueToothData.ACTION_SYNC_CONTACTS_NOT_SUPPORT.equals(action)){
-				if(mBluetoothContactsDialog == null){
-                    showDialog(DIALOG_SYNC_CONTACTS);
-                }
-                mBluetoothContactsDialog.setMessage(mContext.getString(R.string.description_sync_contacts_notsupport));
-				mHandler.sendEmptyMessageDelayed(MSG_SYNC_CONTACTS_COMPLETE, DELAY_TIME_READ);
 			}else if(BonovoBlueToothData.ACTION_SEND_COMMANDER_ERROR.equals(action)){
 				if(DEBUG) Log.e(TAG, "send bluetooth commander error!!!");
             }else if(BonovoBlueToothData.ACTION_BT_NAME.equals(action)){
@@ -393,45 +300,10 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 						}
 					}
 				}
-			}else if (intent.getAction().equals("BlueTooth.Media_Broadcast_Next")) {
-				if(mBtService != null && mBtService.getBtSwitchStatus() && mBtService.getMusicServiceEnable()){
-					mBtService.BlueToothMusicNext();
-					if(DEBUG) Log.d(TAG, "btnNext is been pressed.");
-				}else{
-					Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-				}
-			} else if (intent.getAction().equals("BlueTooth.Media_Broadcast_Last")) {
-				if(mBtService != null && mBtService.getBtSwitchStatus() && mBtService.getMusicServiceEnable()){
-					mBtService.BlueToothMusicPre();
-					if(DEBUG) Log.d(TAG, "btnPre is been pressed.");
-				}else{
-					Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-				}
-			
-			} else if (intent.getAction().equals("BlueTooth.Media_Broadcast_Play_Pause")) {
-				if(mBtService.getMusicStatus()){
-					if(mBtService != null && mBtService.getMusicServiceEnable()){
-						mBtService.BlueToothMusicPause();
-                        if(DEBUG) Log.d(TAG, "btnPuse is been pressed.");
-					}else{
-                        Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-					}
-					
-				}else{
-					if(mBtService != null && mBtService.getMusicServiceEnable()){
-						mBtService.BlueToothMusicPlay();
-						if(DEBUG) Log.d(TAG, "btnPlay is been pressed.");
-					}else{
-						Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-					}
-				}
 			}else if(action.equals("android.intent.action.BONOVO_SLEEP_KEY")
                || action.equals("android.intent.action.ACTION_SHUTDOWN")){
 				mTvBtStatus.setText(R.string.bluetooth_status_closed);
-    			mIgeBtStatus.setImageResource(R.drawable.setting_bluetooth_close);
     			mTvBtHFPStatus.setText(R.string.phone_link_status_closed);
-                mBtnMusicPlay.setVisibility(View.VISIBLE);
-			    mBtnMusicPause.setVisibility(View.INVISIBLE);
 			}else if(action.equals("android.intent.action.BONOVO_WAKEUP_KEY")){
 
 			}
@@ -463,103 +335,7 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 			startActivity(intent);
 			break;
 		}
-		
-		// the button of music
-		case R.id.btnMusic:{
-			if((mBtService == null) || (!mBtService.getBtSwitchStatus())){
-				Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-				break;
-			}
-			if(mStubBtMusic != null){
-				mStubBtMusic.setVisibility(View.VISIBLE);
-				mBtnMusic.setVisibility(View.GONE);
-				mBtnSettings.setVisibility(View.VISIBLE);
-			}
-			if(mStubBtSettings != null){
-				mStubBtSettings.setVisibility(View.GONE);
-			}
-			break;
-		}
-		
-		// the button of settings
-		case R.id.btnSettings:{
-			if(mStubBtSettings != null){
-				mStubBtSettings.setVisibility(View.VISIBLE);
-				mBtnSettings.setVisibility(View.GONE);
-				mBtnMusic.setVisibility(View.VISIBLE);
-			}
-			if(mStubBtMusic != null){
-				mStubBtMusic.setVisibility(View.GONE);
-			}
-			break;
-		}
-		
-		// the button of sync contacts
-		case R.id.btnSyncContacts:{
-			if((mBtService == null) || (!mBtService.getBtSwitchStatus())){
-				Toast.makeText(mContext, R.string.description_sync_contacts_disable, Toast.LENGTH_SHORT).show();
-				break;
-			}
-			
-			String syncInfo = getString(R.string.description_sync_select) + "\n" 
-					+ getString(R.string.description_sync_sim) + "\n"
-					+ getString(R.string.description_sync_phone);
-			new AlertDialog.Builder(BluetoothSettings.this)
-				.setTitle(R.string.title)
-				.setMessage(syncInfo)
-				.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
-					
-					@SuppressWarnings("deprecation")
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						if (mBtService.getBtSwitchStatus() && mBtService.getBtHFPStatus()) {
-				
-							showDialog(DIALOG_SYNC_CONTACTS);
-							new Thread() {
-								@Override
-								public void run() {
-								    mIsSyncPhoneBook = true;
-									mBtService.SynchSimContacts();
-								}
-							}.start();
-						} else {
-							Toast.makeText(getApplicationContext(),
-									R.string.description_sync_contacts_disable, Toast.LENGTH_SHORT)
-									.show();
-						}
-						
-					}
-				})
-				.setNeutralButton("Phone", new DialogInterface.OnClickListener() {
-					
-					@SuppressWarnings("deprecation")
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						if (mBtService.getBtSwitchStatus() && mBtService.getBtHFPStatus()) {
-				
-							showDialog(DIALOG_SYNC_CONTACTS);
-							new Thread() {
-								@Override
-								public void run() {
-								    mIsSyncPhoneBook = true;
-									mBtService.SynchPhoneContacts();
-								}
-				
-							}.start();
-						} else {
-							Toast.makeText(getApplicationContext(),
-									R.string.description_sync_contacts_disable, Toast.LENGTH_SHORT)
-									.show();
-						}
-					}
-				})
-				.create()
-				.show();
-			break;
-		}
-		
+							
 		// the button of volume up
 		case R.id.btnVolAdd:{
 			if((mBtService == null) || (!mBtService.getBtSwitchStatus())){
@@ -583,60 +359,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 			}
 			break;
 		}
-			//-------------------------------------------------------------------------------------------------------
-			//下面的Button代码是为了保持蓝牙界面风格的一致性而删除的。
-			//下面Button实现的蓝牙开关控制功能已经用上面的Switch表示。
-			//  ——swxia. Date:20140721.
-			// ------------------------------------------------------------------------------------------------------  
-//	    	case R.id.btnBluetoothStatus:{
-//			mBtService.setBtSwitchStatus(!mBtService.getBtSwitchStatus());
-//
-//			boolean powerStatus = mBtService.getBtSwitchStatus();
-//			boolean hfpStatus = mBtService.getBtHFPStatus();
-//			mBtnBtPower.setText(powerStatus ? R.string.setting_button_bluetooth_status_closed : R.string.setting_button_bluetooth_status_open);
-//			mTvBtStatus.setText(powerStatus ? R.string.bluetooth_status_opened : R.string.bluetooth_status_closed);
-//			mIgeBtStatus.setImageResource(powerStatus ? R.drawable.setting_bluetooth_opened : R.drawable.setting_bluetooth_close);
-//			mTvBtHFPStatus.setText(hfpStatus ? R.string.phone_link_status_opened : R.string.phone_link_status_closed);
-//			mTvBtNameInfo.setText(mBtService.getBtName());
-//			mTvBtPinInfo.setText(mBtService.getBtPinCode());
-//
-//			break;
-//		}
-    	case R.id.buttonBluetoothMusicPre:
-    		if(mBtService != null && mBtService.getBtSwitchStatus()){
-    			mBtService.BlueToothMusicPre();
-    		}else{
-    			Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-    		}
-    		break;
-    	case R.id.buttonBluetoothMusicPlay:
-    		if(mBtService != null && mBtService.getBtSwitchStatus()){
-    			mBtService.BlueToothMusicPlay();
-    		}else{
-    			Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-    		}
-    		break;
-    	case R.id.buttonBluetoothMusicPause:
-    		if(mBtService != null && mBtService.getBtSwitchStatus()){
-    			mBtService.BlueToothMusicPause();
-    		}else{
-    			Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-			}
-			break;
-		case R.id.buttonBluetoothMusicStop:
-			if(mBtService != null && mBtService.getBtSwitchStatus()){
-				mBtService.BlueToothMusicStop();
-			}else{
-				Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-			}
-			break;
-		case R.id.buttonBluetoothMusicNext:
-			if(mBtService != null && mBtService.getBtSwitchStatus()){
-				mBtService.BlueToothMusicNext();
-			}else{
-				Toast.makeText(mContext, R.string.description_music_disable, Toast.LENGTH_SHORT).show();
-			}
-			break;
 		default:
 			break;
 		}
@@ -690,13 +412,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 		public void handleMessage(Message msg) {
 			int what = msg.what;
 			switch (what) {
-            case MSG_SYNC_CONTACTS_COMPLETE:
-                mIsSyncPhoneBook = false;
-				if (mBluetoothContactsDialog != null) {
-					removeDialog(DIALOG_SYNC_CONTACTS);
-                    mBluetoothContactsDialog = null;
-				}
-				break;
 			case MSG_UPDATA_BT_NAME:
 				String newName = (String)msg.obj;
 				if((newName != null) && (!newName.equals("")) && (mBtService != null)){
@@ -736,22 +451,4 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 			}
 		}
 	};
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		// TODO Auto-generated method stub
-		switch (id) {
-		case DIALOG_SYNC_CONTACTS:
-			mBluetoothContactsDialog = new ProgressDialog(this);
-			mBluetoothContactsDialog
-					.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			mBluetoothContactsDialog.setTitle(getResources().getString(
-					R.string.app_name));
-			mBluetoothContactsDialog.setMessage(mContext.getString(R.string.description_sync_contacts_wait_info));
-			mBluetoothContactsDialog.setIndeterminate(false);
-
-			return mBluetoothContactsDialog;
-		}
-		return null;
-	}
 }

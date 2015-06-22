@@ -34,7 +34,6 @@
 #define CODEC_DEFAULT_SOURCE                CODEC_LEVEL_NO_ANALOG
 
 void android_callback(int cmd, char* param, int len);
-void android_synchPhoneBook(char *na ,char *num);
 int set_bonovo_bluetooth_power(int onOff);
 
 int bonovo_bluetooth_thread_status = 0;
@@ -119,170 +118,6 @@ int recoverAudio(CODEC_Level codec_mode)
 	}
 	return ret;
 }
-
-#if (0)
-/*!
- *********************************************
- * 解析后的姓名中不含空格字符的		// Name of the parsed without a space character
- *********************************************
- */
-int explainContactsWithoutSapce(char *data, int dataLen)
-{
-	char name[BT_BUFF_SIZE] = {'\0'};
-	char telephone[BT_BUFF_SIZE] = {'\0'};
-	int i, idxName, idxTel, status;
-
-    if(dataLen > BT_BUFF_SIZE){
-        ALOGE("ERROR. The data length is too large!");
-        return -1;
-    }
-
-	for (i = 0, idxName = 0, idxTel = 0, status = 0; i < dataLen; i++) {
-		if (((0 == status) || (2 == status))&&(' ' == data[i])) {
-			continue;
-		}
-		if ((i+1 < dataLen) && ('P' == data[i]) && ('B' == data[i + 1])) {
-			i++;
-			continue;
-		} else if (0xFF == data[i]) {
-			status = 2;
-		} else {
-			if ((0x0D == data[i]) && (i + 1 < dataLen) && (0x0A == data[i + 1]))
-				break;
-			if (('P' == data[i]) && (i + 1 < dataLen) && ('B' == data[i + 1])){
-				memset(name, 0, BT_BUFF_SIZE);
-				memset(telephone, 0, BT_BUFF_SIZE);
-				idxName = idxTel = 0;
-				status = 0;
-				i++;
-				continue;
-			}
-
-			if (0 == status) {
-				status = 1;
-				name[idxName] = data[i];
-				idxName++;
-				if(idxName >= BT_BUFF_SIZE){
-					ALOGE("ERROR.Name: %s, idxName >= BT_BUFF_SIZE!  status:%d.", name, status);
-					return -1;
-				}
-			} else if (1 == status) {
-				name[idxName] = data[i];
-				idxName++;
-				if(idxName >= BT_BUFF_SIZE){
-					ALOGE("ERROR.Name: %s error. idxName >= BT_BUFF_SIZE!  status:%d.", name, status);
-					return -1;
-				}
-			} else if (2 == status) {
-				telephone[idxTel] = data[i];
-				idxTel++;
-				if(idxTel >= BT_BUFF_SIZE){
-					ALOGE("ERROR.telephone: %s error. idxTel >= BT_BUFF_SIZE! status:%d.", telephone, status);
-					return -1;
-				}
-			}
-		}
-	}
-	name[idxName] = '\0';
-	telephone[idxTel] = '\0';
-
-	LOGD("idxName:%d\tName: %s", idxName, name);
-	LOGD("idxTele:%d\tTele: %s", idxTel, telephone);
-    if((idxName > 0) && (idxTel > 0)){
-
-        // remove the space in the end of name
-        for(i = idxName-1; i>=0; i--){
-            if(name[i] == ' '){
-                name[i] = '\0';
-                idxName--;
-            }else{
-                break;
-            }
-        }
-        android_synchPhoneBook(name,telephone);
-    }
-	return 0;
-}
-#else
-
-/*!
- *********************************************
- * 解析后的姓名中不含空格字符的		// Name of the parsed without a space character
- *********************************************
- */
-int explainContactsWithoutSapce(char *data, int dataLen)
-{
-	char name[BT_BUFF_SIZE] = {'\0'};
-	char telephone[BT_BUFF_SIZE] = {'\0'};
-	int i;
-	int idxName = 0;
-	int idxTel = 0;
-	int status = 0;
-
-    if(dataLen > BT_BUFF_SIZE){
-		dataLen = BT_BUFF_SIZE;
-		data[BT_BUFF_SIZE-2] = 0x0D;
-		data[BT_BUFF_SIZE-1] = 0x0A;
-        ALOGE("ERROR. The data length is too large!");
-    }
-	LOGD("dataLen = %d", dataLen);
-
-	for (i = 0; i < dataLen; i++) {
-		// skip the space char 
-		// 1.ahead of name and telephone number
-		// 2.in the telephone number
-		// 3.but do not skip the space char in the name
-		if (((0 == status) || (2 == status))&&(' ' == data[i])) {
-			continue;
-		}
-		else if (0xFF == data[i]) {
-			status = 2;
-		} 
-		else {
-			// check ending flag
-			if ((0x0D == data[i]) && (i + 1 < dataLen) && (0x0A == data[i + 1]))
-				break;
-			// check beginning flag
-			if (('P' == data[i]) && (i + 1 < dataLen) && ('B' == data[i + 1])){
-				i++;	// do not use 'i+=2', because in the for loop, 'i' will be increased auto
-				continue;
-			}
-
-			if (0 == status) {
-				status = 1;
-				name[idxName] = data[i];
-				idxName++;
-			} else if (1 == status) {
-				name[idxName] = data[i];
-				idxName++;
-			} else if (2 == status) {
-				telephone[idxTel] = data[i];
-				idxTel++;
-			}
-		}
-	}
-	
-
-    if((idxName > 0) && (idxTel > 0)){
-		memset(&name[idxName], 0, BT_BUFF_SIZE-idxName);
-		memset(&telephone[idxTel], 0, BT_BUFF_SIZE-idxTel);
-        // remove the space in the end of name
-        for(i = idxName-1; i>=0; i--){
-            if(name[i] == ' '){
-                name[i] = '\0';
-                idxName--;
-            }else{
-                break;
-            }
-        }
-		LOGD("idxName:%d\tName: %s", idxName, name);
-		LOGD("idxTele:%d\tTele: %s", idxTel, telephone);
-        android_synchPhoneBook(name,telephone);
-    }
-	return 0;
-}
-#endif
-
 
 void *thread_func_bluetooth_read(void *argv) {
 	char myCmdBuffer[BT_MAX_BUFF_SIZE+1];
@@ -373,9 +208,7 @@ void *thread_func_bluetooth_read(void *argv) {
 			}
 			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'B'){
 				LOGD("{myLineBuf =%s frameEnd =%d}",myLineBuf,frameEnd);
-				explainContactsWithoutSapce(myLineBuf,frameEnd);
-				//LOGD("gname=%s ,gnum=%s",gname,gnum);
-				//android_synchPhoneBook(gname,gnum);
+                android_callback(CMD_UNSOLICATED_PB, &myLineBuf[k+2], frameEnd-2);
 			}
 			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'C'){
 				android_callback(CMD_UNSOLICATED_PC, NULL, 0);

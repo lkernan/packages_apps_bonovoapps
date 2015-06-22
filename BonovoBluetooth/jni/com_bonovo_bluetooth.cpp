@@ -47,37 +47,13 @@ void android_callback(int cmd, char* param, int len) {
     gJavaVM->DetachCurrentThread();
 }
 
-void android_synchPhoneBook(char *na ,char * num){
-	int status;
-	JNIEnv *env;
-
-	status = gJavaVM->AttachCurrentThread(&env, NULL);
-		if (status < 0) {
-			ALOGE("callback_handler: failed to attach " "current thread");
-			return;
-		}
-
-	jstring jnum = env->NewStringUTF(num);
-	jstring name = env->NewStringUTF(na);
-
-	env->CallVoidMethod(gBluePhoneBookObj, method_report2, name,jnum);
-
-	gJavaVM->DetachCurrentThread();
-}
-
 static void android_bonovo_bluetooth_init(JNIEnv* env, jobject thiz) {
 	if (!gBonovoBlueToothObj) {
 		gBonovoBlueToothObj = env->NewGlobalRef(thiz);
 	}
 
-	if(!gBluePhoneBookObj){
-		gBluePhoneBookObj = env ->NewGlobalRef(thiz);
-	}
 	jclass interfaceClass = env->GetObjectClass(gBonovoBlueToothObj);
 	method_report = env->GetMethodID(interfaceClass, "BlueToothCallback","(ILjava/lang/String;)V");
-
-	jclass interfaceClass2 = env->GetObjectClass(gBluePhoneBookObj);
-	method_report2 =env->GetMethodID(interfaceClass2, "SynchPhoneBook","(Ljava/lang/String;Ljava/lang/String;)V");
 
 	start_bonovo_bluetooth();
 }

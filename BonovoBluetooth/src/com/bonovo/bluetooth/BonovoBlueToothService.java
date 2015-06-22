@@ -42,7 +42,6 @@ public class BonovoBlueToothService extends Service {
     private boolean mReadName = false;
     private boolean mReadPinCode = false;
 	private boolean mIsBindered = false;
-    private boolean mIsSyncingContacts = false;
     private boolean mMicMuted = false;
     private int mPhoneSignalLevel = 0;
     private int mPhoneBatteryLevel = 0;
@@ -55,7 +54,6 @@ public class BonovoBlueToothService extends Service {
 	private String myBtName = DEF_BT_NAME; // bt name
 	private String myBtPinCode = DEF_BT_PIN; // PIN code
 	private PhoneState mBtPhoneState = PhoneState.OFFHOOK;
-    private List<Contact> mListContacts;
 	
 	/**
 	 * The Phone state. One of the following:
@@ -152,8 +150,6 @@ public class BonovoBlueToothService extends Service {
 	private native int BonovoBlueToothActiveAudio(int level);
 	private native int BonovoBlueToothRecoveryAudio(int level);
 
-	//private native String GetContacts();
-	
 	private native void BonovoBlueToothSetWithParam(int cmd, String param);
 	
 	private ServiceBinder serviceBinder = new ServiceBinder();
@@ -357,7 +353,6 @@ public class BonovoBlueToothService extends Service {
     }
 	
 	private Handler mHandler = new Handler() {
-		@SuppressWarnings("deprecation")
 		public void handleMessage(Message msg) {
 			int what = msg.what;
 			switch (what) {
@@ -386,62 +381,6 @@ public class BonovoBlueToothService extends Service {
 				i.putExtra(BonovoBlueToothData.PHONE_STATE, getPhoneState().toString());
 				
 				mContext.sendOrderedBroadcast(i, null);
-			}
-			break;
-			case MSG_PHONE_NEW_CALL_WAITING:{
-				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_NEW_CALL_WAITING);
-				mContext.sendBroadcast(icw);
-			}
-			break;
-			case MSG_PHONE_HELD_ACTIVE_SWITCHED_TO_CALL_WAITING:{
-				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HELD_ACTIVE_SWITCHED_TO_CALL_WAITING);
-				mContext.sendBroadcast(icw);
-			}
-			break;
-			case MSG_PHONE_CONFERENCE_CALL:{
-				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_CONFERENCE_CALL);
-				mContext.sendBroadcast(icw);
-			}
-			break;
-			case MSG_PHONE_HUNG_UP_INACTIVE:{
-				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HUNG_UP_INACTIVE);
-				mContext.sendBroadcast(icw);
-			}
-			break;
-			case MSG_PHONE_HUNG_UP_ACTIVE_SWITCHED_TO_CALL_WAITING:{
-				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HUNG_UP_ACTIVE_SWITCHED_TO_CALL_WAITING);
-				mContext.sendBroadcast(icw);
-			}
-			break;
-	
-			case MSG_PHONE_SIGNALLEVEL:{
-				Integer newLevel = (Integer)msg.obj;
-				if(newLevel != mPhoneSignalLevel) {
-					mPhoneSignalLevel = newLevel;
-					Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_SIGNAL_LEVEL_CHANGED);
-					icw.putExtra(BonovoBlueToothData.LEVEL, newLevel);
-					mContext.sendBroadcast(icw);
-				}
-			}
-			break;
-			case MSG_PHONE_BATTERYLEVEL:{
-				Integer newLevel = (Integer)msg.obj;
-				if(newLevel != mPhoneBatteryLevel) {
-					mPhoneBatteryLevel = newLevel;
-					Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_BATTERY_LEVEL_CHANGED);
-					icw.putExtra(BonovoBlueToothData.LEVEL, newLevel);
-					mContext.sendBroadcast(icw);
-				}
-			}
-			break;
-			case MSG_PHONE_NETWORKNAME:{
-				String newName = (String)msg.obj;
-				if(newName != mPhoneOperatorName) {
-					mPhoneOperatorName = newName;
-					Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_NETWORK_NAME_CHANGED);
-					icw.putExtra(BonovoBlueToothData.NAME, newName);
-					mContext.sendBroadcast(icw);
-				}
 			}
 			break;
 			case MSG_HFP_STATE_CHANGE:{
@@ -551,43 +490,6 @@ public class BonovoBlueToothService extends Service {
                 if(info != null)
                     Toast.makeText(mContext, info, Toast.LENGTH_SHORT).show();
                 break;
-            case MSG_SYNC_PHONE_BOOK_COMPLETE:
-                break;
-            case MSG_SYNC_CONTACTS_READ_COUNT:{
-                int count = msg.arg1;
-                if(count > 0){
-                    this.removeMessages(MSG_SYNC_CONTACTS_TIMEOUT);
-                    this.sendEmptyMessageDelayed(MSG_SYNC_CONTACTS_TIMEOUT, DELAY_TIMEOUT_SYNC_CONTACTS);
-                    Intent i = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_READ_COUNT);
-				    i.putExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, count);
-				    mContext.sendBroadcast(i);
-                }
-                break;
-            }
-            case MSG_SYNC_CONTACTS_WRITE_DATABASE:{
-                if(mContext == null || mListContacts == null){
-                    mIsSyncingContacts = false;
-                    break;
-                }
-                new Thread() {
-    				@Override
-    				public void run() {
-    				    mHandler.removeMessages(MSG_SYNC_CONTACTS_TIMEOUT);
-                        if(mListContacts.size() > 0){
-                            Intent i = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_WRITE_DATABASE);
-        				    i.putExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, mListContacts.size());
-        				    mContext.sendBroadcast(i);
-                            //AddContactsNoDuplicateNames(mContext, mListContacts);
-        					AddContactsInDataBase(mContext, mListContacts);
-                            mListContacts.clear();
-                        }
-                        mIsSyncingContacts = false;
-            			Intent intent = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_COMPLETE);
-            			sendBroadcast(intent);
-    				}
-    			}.start();
-                break;
-            }
             case MSG_STOP_MUSIC:{
                 if((mMusicStopTimes < MAX_PAUSE_MUSIC_TIMES) 
                     && !getMusicServiceEnable() && getMusicStatus()){
@@ -613,36 +515,6 @@ public class BonovoBlueToothService extends Service {
                 BonovoBlueToothRecoveryAudio(level);
         		break;
             }
-            case MSG_SYNC_CONTACTS_TIMEOUT:{
-                if(mContext == null || mListContacts == null){
-                    mIsSyncingContacts = false;
-                    break;
-                }
-
-                new Thread() {
-    				@Override
-    				public void run() {
-                        if(mListContacts.size() > 0){
-                            Intent i = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_TIMEOUT);
-        				    i.putExtra(BonovoBlueToothData.KEY_SYNC_CONTACTS_COUNT, mListContacts.size());
-        				    mContext.sendBroadcast(i);
-                            //AddContactsNoDuplicateNames(mContext, mListContacts);
-        					AddContactsInDataBase(mContext, mListContacts);
-                            mListContacts.clear();
-                        }
-                        mIsSyncingContacts = false;
-            			Intent intent = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_COMPLETE);
-            			sendBroadcast(intent);
-    				}
-    			}.start();
-                break;
-            }
-            case MSG_SYNC_CONTACTS_NOTSUPPORT:{
-                mIsSyncingContacts = false;
-                Intent intent = new Intent(BonovoBlueToothData.ACTION_SYNC_CONTACTS_NOT_SUPPORT);
-                sendBroadcast(intent);
-                break;
-            }
             case MSG_SEND_COMMANDER_ERROR:{
                 Intent intent = new Intent(BonovoBlueToothData.ACTION_SEND_COMMANDER_ERROR);
                 sendBroadcast(intent);
@@ -658,8 +530,6 @@ public class BonovoBlueToothService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		mContext = getApplicationContext();
-        mListContacts = new ArrayList<BonovoBlueToothService.Contact>();
-        mListContacts.clear();
         
 		getBtName();
 		getBtPinCode();
@@ -716,29 +586,7 @@ public class BonovoBlueToothService extends Service {
 	public void BlueToothPbapContacts() {
 		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_QB);
 	}
-	
-	// sync contacts in phone
-	public void SynchPhoneContacts() {
-	    if(mIsSyncingContacts){
-            return;
-        }
-        mIsSyncingContacts = true;
-	    mListContacts.clear();
-		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_PB);
-        mHandler.sendEmptyMessageDelayed(MSG_SYNC_CONTACTS_TIMEOUT, DELAY_TIMEOUT_WAIT_USER);
-	}
-	
-	// sync contacts in sim card
-	public void SynchSimContacts() {
-	    if(mIsSyncingContacts){
-            return;
-        }
-        mIsSyncingContacts = true;
-	    mListContacts.clear();
-		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_PA);
-        mHandler.sendEmptyMessageDelayed(MSG_SYNC_CONTACTS_TIMEOUT, DELAY_TIMEOUT_WAIT_USER);
-	}
-	
+		
 	// read all records
 	public void BlueToothDownloadContacts() {
 		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_PF);
@@ -1246,8 +1094,13 @@ public class BonovoBlueToothService extends Service {
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IX:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IX param:" + param);
 			if(param.length() > 0){	
-				Message msg = mHandler.obtainMessage(MSG_PHONE_BATTERYLEVEL, Integer.parseInt(param.substring(0,1)));
-				mHandler.sendMessage(msg);
+				Integer newLevel = Integer.parseInt(param.substring(0,1));
+				if(newLevel != mPhoneBatteryLevel) {
+					mPhoneBatteryLevel = newLevel;
+					Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_BATTERY_LEVEL_CHANGED);
+					icw.putExtra(BonovoBlueToothData.LEVEL, newLevel);
+					mContext.sendBroadcast(icw);
+				}
 			}
 			break;
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IV:
@@ -1256,8 +1109,13 @@ public class BonovoBlueToothService extends Service {
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IU:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IU param:" + param);
 			if(param.length() > 0){
-				Message msg = mHandler.obtainMessage(MSG_PHONE_SIGNALLEVEL, Integer.parseInt(param.substring(0,1)));
-				mHandler.sendMessage(msg);
+				Integer newLevel = Integer.parseInt(param.substring(0,1));
+				if(newLevel != mPhoneSignalLevel) {
+					mPhoneSignalLevel = newLevel;
+					Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_SIGNAL_LEVEL_CHANGED);
+					icw.putExtra(BonovoBlueToothData.LEVEL, newLevel);
+					mContext.sendBroadcast(icw);
+				}
 			}
 			break;
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_MC:
@@ -1309,47 +1167,56 @@ public class BonovoBlueToothService extends Service {
 			mHandler.sendMessage(msg);
 			break;
 		}
-		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IO0:
+		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IO0:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IO0");
 			mMicMuted = false;
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_MUTE_STATE_CHANGED);
+			icw.putExtra("state", mMicMuted);
+			mContext.sendBroadcast(icw);
+		}
 			break;	
-		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IO1:
+		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IO1:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IO1");
 			mMicMuted = true;		
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_MUTE_STATE_CHANGED);
+			icw.putExtra("state", mMicMuted);
+			mContext.sendBroadcast(icw);
+		}
 			break;
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IK:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IK param:" + param);
 			// call waiting - number attached
-			Message msg = mHandler.obtainMessage(MSG_PHONE_NEW_CALL_WAITING, param);
-			mHandler.sendMessage(msg);
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_NEW_CALL_WAITING);
+			icw.putExtra(BonovoBlueToothData.PHONE_NUMBER, param);
+			mContext.sendBroadcast(icw);
 			break;
 		}
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IL:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IL");
 			// Held active call and switched to call waiting
-			Message msg = mHandler.obtainMessage(MSG_PHONE_HELD_ACTIVE_SWITCHED_TO_CALL_WAITING);
-			mHandler.sendMessage(msg);
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HELD_ACTIVE_SWITCHED_TO_CALL_WAITING);
+			mContext.sendBroadcast(icw);
 			break;
 		}
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IM:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IM");
 			// Conference call created
-			Message msg = mHandler.obtainMessage(MSG_PHONE_CONFERENCE_CALL);
-			mHandler.sendMessage(msg);
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_CONFERENCE_CALL);
+			mContext.sendBroadcast(icw);
 			break;
 		}
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IN:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IN");
 			// Release held or reject waiting call (hang up the inactive call)
-			Message msg = mHandler.obtainMessage(MSG_PHONE_HUNG_UP_INACTIVE);
-			mHandler.sendMessage(msg);
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HUNG_UP_INACTIVE);
+			mContext.sendBroadcast(icw);
 			break;
 		}
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IT:{
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_IT");
 			// Release active and switch to call waiting
-			Message msg = mHandler.obtainMessage(MSG_PHONE_HUNG_UP_ACTIVE_SWITCHED_TO_CALL_WAITING);
-			mHandler.sendMessage(msg);
+			Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_HUNG_UP_ACTIVE_SWITCHED_TO_CALL_WAITING);
+			mContext.sendBroadcast(icw);
 			break;
 		}
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_IQ:
@@ -1363,8 +1230,12 @@ public class BonovoBlueToothService extends Service {
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_PV:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_PV param:" + param);
 			// Current phone network operator name
-			Message msg1 = mHandler.obtainMessage(MSG_PHONE_NETWORKNAME, param);
-			mHandler.sendMessage(msg1);
+			if(param != mPhoneOperatorName) {
+				mPhoneOperatorName = param;
+				Intent icw = new Intent(BonovoBlueToothData.ACTION_PHONE_NETWORK_NAME_CHANGED);
+				icw.putExtra(BonovoBlueToothData.NAME, param);
+				mContext.sendBroadcast(icw);
+			}
 			break;			
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_PZ:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_PZ");
@@ -1375,151 +1246,6 @@ public class BonovoBlueToothService extends Service {
 		}
 
 	}
-
-    private class Contact {
-        private String mName;
-        private String mNumber;
-
-        public Contact() {
-            super();
-        }
-
-        public Contact(String name, String number){
-            super();
-            mName = name;
-            mNumber = number;
-        }
-
-        public String getName(){
-            return mName;
-        }
-
-        public String getNumber(){
-            return mNumber;
-        }
-
-        public void setName(String name){
-            mName = name;
-        }
-
-        public void setNumber(String number){
-            mNumber = number;
-        }
-
-        public String toString(){
-            return ("Contact name:" + mName + " number:" + mNumber);
-        }
-    }
-	
-	/*!
-	 * sync contacts
-	 */		
-	public	void SynchPhoneBook(String name,String js){
-	    if(mIsSyncingContacts){
-    	    Contact contact = new Contact(name, js);
-    	    mListContacts.add(contact);
-            Message msg = mHandler.obtainMessage(MSG_SYNC_CONTACTS_READ_COUNT, mListContacts.size(), 0);
-            mHandler.sendMessage(msg);
-	    }
-/*		ContentValues values = new ContentValues();
-		values.put(People.NAME,name);
-		Uri uri = getContentResolver().insert(People.CONTENT_URI, values);
-		Uri numberUri = Uri.withAppendedPath(uri, People.Phones.CONTENT_DIRECTORY);
-		values.clear();
-		values.put(Contacts.Phones.TYPE, People.Phones.TYPE_MOBILE);
-		values.put(People.NUMBER, js);
-		getContentResolver().insert(numberUri, values);
-*/	
-	}
-
-    public void AddContactsInDataBase(Context context, List<Contact> list){
-        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-        ArrayList<ContentProviderOperation> batchOps = new ArrayList<ContentProviderOperation>();
-        int batch = 0, index = 0;
-
-//      for(int i = 0; i<list.size(); i++){
-//          index = ops.size();
-//          ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-//              .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-//              .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-//              .withValue(ContactsContract.RawContacts.AGGREGATION_MODE, ContactsContract.RawContacts.AGGREGATION_MODE_DEFAULT)
-//              .withYieldAllowed(true)
-//              .build());
-//          ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-//              .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
-//              .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-//              .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, list.get(i).getName())
-//              .withYieldAllowed(true)
-//              .build());
-//          ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-//              .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
-//              .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-//              .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, list.get(i).getNumber())
-//              .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, Phone.TYPE_MOBILE)
-//              .withYieldAllowed(true)
-//              .build());
-//      }
-
-        batch = list.size()/MAX_COUNT_CONTACTS_PRE_SYNC;
-        for(int j=0; j<= batch; j++){
-            ops.clear();
-            for(int i=j*MAX_COUNT_CONTACTS_PRE_SYNC; i<(j+1)*MAX_COUNT_CONTACTS_PRE_SYNC && (i < list.size()); i++){
-                index = ops.size();
-                ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-                    .withValue(ContactsContract.RawContacts.AGGREGATION_MODE, ContactsContract.RawContacts.AGGREGATION_MODE_DEFAULT)
-                    .withYieldAllowed(true)
-                    .build());
-                ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
-                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, list.get(i).getName())
-                    .withYieldAllowed(true)
-                    .build());
-                ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
-                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, list.get(i).getNumber())
-                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, Phone.TYPE_MOBILE)
-                    .withYieldAllowed(true)
-                    .build());
-            }
-
-            try {
-                context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-            }catch(RemoteException e){
-                Log.e(TAG, "Cann't write database. Happened RemoteException Error.");
-                e.printStackTrace();
-            }catch(OperationApplicationException e){
-                Log.e(TAG, "Cann't write database. Happened OperationApplicationException Error.");
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void AddContactsNoDuplicateNames(Context context, List<Contact> list){
-
-        for(int i = 0; i<list.size(); i++){
-            ContentValues value = new ContentValues();
-            Uri rawContactUri = context.getContentResolver().insert(ContactsContract.RawContacts.CONTENT_URI, value);
-            long rawContactId = ContentUris.parseId(rawContactUri);
-            Log.d(TAG, "====== [rawContactId:" + rawContactId + "] " + list.get(i).toString());
-
-            value.clear();
-            value.put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-            value.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
-            value.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, list.get(i).getName());
-            context.getContentResolver().insert(ContactsContract.Data.CONTENT_URI, value);
-
-            value.clear();
-            value.put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-            value.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
-            value.put(ContactsContract.CommonDataKinds.Phone.NUMBER, list.get(i).getNumber());
-            value.put(ContactsContract.CommonDataKinds.Phone.TYPE, Phone.TYPE_MOBILE);
-            context.getContentResolver().insert(ContactsContract.Data.CONTENT_URI, value);
-        }
-    }
 
 	class BonovoBlueToothUnsolicatedCmd {
 		// Unsolicated Cmd	--  Sent by the HFP device to indicate status
@@ -1590,59 +1316,6 @@ public class BonovoBlueToothService extends Service {
 		public static final int CMD_UNSOLICATED_IT = 59;	// Release active call and switched to call waiting
 		
 		public static final int CMD_UNSOLICATED_MAX = 60;
-		
-//		public static final int CMD_UNSOLICATED_IS = 0;
-//		public static final int CMD_UNSOLICATED_IA = 1;
-//		public static final int CMD_UNSOLICATED_IB = 2;
-//		public static final int CMD_UNSOLICATED_IC = 3;
-//		public static final int CMD_UNSOLICATED_ID = 4;
-//		public static final int CMD_UNSOLICATED_IF = 5;
-//		public static final int CMD_UNSOLICATED_IG = 6;
-//		public static final int CMD_UNSOLICATED_II = 7;
-//		public static final int CMD_UNSOLICATED_IJ = 8;
-//		public static final int CMD_UNSOLICATED_IR = 9;
-//		public static final int CMD_UNSOLICATED_IV = 10;
-//		public static final int CMD_UNSOLICATED_IU = 11;
-//		public static final int CMD_UNSOLICATED_MA = 12;
-//		public static final int CMD_UNSOLICATED_MB = 13;
-//		public static final int CMD_UNSOLICATED_MC = 14;
-//		public static final int CMD_UNSOLICATED_MD = 15;
-//		public static final int CMD_UNSOLICATED_MF = 16;
-//		public static final int CMD_UNSOLICATED_MG = 17;
-//		public static final int CMD_UNSOLICATED_ML = 18;
-//		public static final int CMD_UNSOLICATED_MM = 19;
-//		public static final int CMD_UNSOLICATED_MN = 20;
-//		public static final int CMD_UNSOLICATED_MU = 22;
-//		public static final int CMD_UNSOLICATED_MW = 23;
-//		public static final int CMD_UNSOLICATED_MX = 24;
-//		public static final int CMD_UNSOLICATED_PA = 25;
-//		public static final int CMD_UNSOLICATED_MY = 26;
-//		public static final int CMD_UNSOLICATED_PB = 27;
-//		public static final int CMD_UNSOLICATED_PC = 28;
-//		public static final int CMD_UNSOLICATED_PN = 29;
-//		public static final int CMD_UNSOLICATED_PK = 30;
-//		public static final int CMD_UNSOLICATED_PL = 31;
-//		public static final int CMD_UNSOLICATED_PE = 32;
-//		public static final int CMD_UNSOLICATED_PF = 33;
-//		public static final int CMD_UNSOLICATED_WA = 34;
-//		public static final int CMD_UNSOLICATED_WB = 35;
-//		public static final int CMD_UNSOLICATED_WC = 36;
-//		public static final int CMD_UNSOLICATED_WD = 37;
-//		public static final int CMD_UNSOLICATED_WN = 38;
-//		public static final int CMD_UNSOLICATED_IX = 39;
-//		public static final int CMD_UNSOLICATED_MK = 40;
-//		public static final int CMD_UNSOLICATED_QH = 41;
-//		public static final int CMD_UNSOLICATED_ERROR = 42;
-//		public static final int CMD_UNSOLICATED_OK = 43;
-//		public static final int CMD_UNSOLICATED_MAX = 44;
-//		public static final int CMD_UNSOLICATED_QB = 45;
-//		public static final int CMD_UNSOLICATED_QA = 46;
-//		public static final int CMD_UNSOLICATED_CZ = 47;
-//		public static final int CMD_UNSOLICATED_CV = 48;
-//		
-//		// add by bonovo zbiao
-//		public static final int CMD_UNSOLICATED_IO0 = 50;
-//		public static final int CMD_UNSOLICATED_IO1 = 51;
 	}
 
 	class BonovoBlueToothRequestCmd {
@@ -1731,8 +1404,10 @@ public class BonovoBlueToothService extends Service {
         public final static String ACTION_PHONE_NETWORK_NAME_CHANGED = "android.intent.action.PHONE_NETWORK_NAME_CHANGED";
         public final static String ACTION_PHONE_SIGNAL_LEVEL_CHANGED = "android.intent.action.PHONE_SIGNAL_LEVEL_CHANGED";
         public final static String ACTION_PHONE_BATTERY_LEVEL_CHANGED = "android.intent.action.PHONE_BATTERY_LEVEL_CHANGED";
+        public final static String ACTION_PHONE_MUTE_STATE_CHANGED = "android.intent.action.PHONE_MUTE_STATE_CHANGED";
 
 		public final static String NAME = "name";
+		public final static String VAL = "value";
 		public final static String LEVEL = "level";
 		public final static String PHONE_NUMBER = "phone_number";
 		public final static String PHONE_STATE = "phone_status";

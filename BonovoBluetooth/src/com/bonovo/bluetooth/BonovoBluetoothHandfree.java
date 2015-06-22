@@ -222,6 +222,8 @@ public class BonovoBluetoothHandfree extends Activity
 				mCallNumber.setText(mCallNumber.getText() + "\n" + mCallWaitingNumber.getText());
 				mCallNumber.setTextSize(R.dimen.call_number_conference_text_size);
 				
+				setContactPhoto(mContext, "0");	 // More than one person in call, default the contact photo
+				
 				mCallWaitingContainer.setVisibility(View.GONE);
 				mConferenceButton.setVisibility(View.GONE);
 				
@@ -233,6 +235,8 @@ public class BonovoBluetoothHandfree extends Activity
 				String activeCall = (String) mCallNumber.getText();
 				mCallNumber.setText(inActiveCall);
 				mCallWaitingNumber.setText(activeCall);
+				
+				setContactPhoto(mContext, inActiveCall);
 				
 				mRejectCallWaiting.setText(R.string.call_waiting_end_held);
 				mRejectCallWaiting.setVisibility(View.VISIBLE);
@@ -356,20 +360,24 @@ public class BonovoBluetoothHandfree extends Activity
 			
 			switch (what) {
 			case MSG_DIAL_HANG_UP:{
-				if(mCallTime != null){
-					mCallTime.setText(R.string.description_phone_hang_up);
+				// Don't hang up if the call is ongoing, we might have switched from a voice command to active call
+				if(myBlueToothService.getPhoneState() != BonovoBlueToothService.PhoneState.ACTIVE) {
+					if(mCallTime != null){
+						mCallTime.setText(R.string.description_phone_hang_up);
 					
-					mDigits.setText(mCallNumber.getText());
-					mDigits.setSelection(mDigits.getText().length());
+						mDigits.setText(mCallNumber.getText());
+						mDigits.setSelection(mDigits.getText().length());
+					}
+					abandonAudioFocus();
+					mHandler.sendEmptyMessageDelayed(MSG_DIAL_FINISH_ACTIVITY, DELAY_TIME_FINISH);
 				}
-				abandonAudioFocus();
-				setView(phoneLayouts.PHONE_DIALPAD);
-				mHandler.sendEmptyMessageDelayed(MSG_DIAL_FINISH_ACTIVITY, DELAY_TIME_FINISH);
 			}
-				break;
+			break;
 			
 			case MSG_DIAL_FINISH_ACTIVITY:
 				if(!mIsUserStarted){
+					setView(phoneLayouts.PHONE_DIALPAD);
+					
 					mHandler.removeMessages(MSG_DIAL_HANG_UP);
 					mHandler.removeMessages(MSG_DIAL_FINISH_ACTIVITY);
 					finish();
