@@ -128,10 +128,10 @@ public class BonovoBlueToothService extends Service {
 	private final static String ACTION_CALL_SWITCHAUDIO = "android.intent.action.BONOVO_CALL_SWITCHAUDIO";
 	private final static String ACTION_CALL_VOLUMEUP = "android.intent.action.BONOVO_CALL_VOLUMEUP";
 	private final static String ACTION_CALL_VOLUMEDOWN = "android.intent.action.BONOVO_CALL_VOLUMEDOWN";
-	private final static String ACTION_CALL_REJECTCALLWAITING = "android.intent.action.BONOVO_REJECTCALLWAITING";
-	private final static String ACTION_CALL_ENDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_ENDANDACCEPTCALLWAITING";
-	private final static String ACTION_CALL_HOLDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_HOLDANDACCEPTCALLWAITING";
-	private final static String ACTION_CALL_MAKECONFERENCECALL = "android.intent.action.BONOVO_MAKECONFERENCECALL";
+	private final static String ACTION_CALL_REJECTCALLWAITING = "android.intent.action.BONOVO_CALL_REJECTCALLWAITING";
+	private final static String ACTION_CALL_ENDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_CALL_ENDANDACCEPTCALLWAITING";
+	private final static String ACTION_CALL_HOLDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_CALL_HOLDANDACCEPTCALLWAITING";
+	private final static String ACTION_CALL_MAKECONFERENCECALL = "android.intent.action.BONOVO_CALL_MAKECONFERENCECALL";
 
     // onKeyEvent
     private final static String ACTION_KEY_BT = "android.intent.action.BONOVO_BT";
@@ -140,6 +140,8 @@ public class BonovoBlueToothService extends Service {
     private final static String ACTION_KEY_BT_ANSWER_HANG = "android.intent.action.BONOVO_BT_ANSWER_HANG";
     private final static String ACTION_KEY_BT_SWITCH_AUDIO = "android.intent.action.BONOVO_BT_SWITCH_AUDIO";
 
+    public PairedDevice[] pairedDevices = new PairedDevice[7];  // HFP device can be paired with up to 8 devices 
+    
 	private native void BonovoBlueToothInit();
 
 	private native void BonovoBlueToothDestroy();
@@ -545,6 +547,9 @@ public class BonovoBlueToothService extends Service {
 		}
 		setBtSwitchStatus(myBtSwitchStatus);
 		registerReceiver(mBroadcastReceiver, getIntentFilter());
+
+		// Fill the list of paired devices
+		BlueToothGetPairedList();
 	}
 
 	@Override
@@ -598,10 +603,15 @@ public class BonovoBlueToothService extends Service {
 	}
 	
 	// read pairing list
-	public void BlueToothHisRecord() {
+	public void BlueToothGetPairedList() {
 		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_MX);
 	}
 	
+	// Returns the details of the device listed at specified position in pairing list
+	public PairedDevice BlueToothGetPairedDeviceDetails(Integer position) {
+		return pairedDevices[position];
+	}
+		
 	// clear pairing records 
 	public void BlueToothClear() {
 		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_CV);
@@ -1011,8 +1021,13 @@ public class BonovoBlueToothService extends Service {
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_CZ:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_CZ");		
 			break;
-		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_MX:
-			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_MX");		
+		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_MX:{
+			Integer listPosition = Integer.parseInt(param.substring(0,1));
+			String MACAddr = param.substring(1,13);
+			String DeviceName = param.substring(13, param.length() - 2);
+			
+			pairedDevices[listPosition] = new PairedDevice(listPosition, MACAddr, DeviceName);
+		}
 			break;	
 		case BonovoBlueToothUnsolicatedCmd.CMD_UNSOLICATED_CV:
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_CV");		
@@ -1244,11 +1259,22 @@ public class BonovoBlueToothService extends Service {
 		default:
 			break;
 		}
-
 	}
 
+	public class PairedDevice {
+		public Integer mPosition = 0;
+		public String mMACAddress = "";
+		public String mName = "";
+		
+		PairedDevice(Integer Position, String MACAddress, String Name) {
+			mPosition = Position;
+			mMACAddress = MACAddress;
+			mName = Name;
+		}
+	}
+	
 	class BonovoBlueToothUnsolicatedCmd {
-		// Unsolicated Cmd	--  Sent by the HFP device to indicate status
+		// Unsolicited Command	--  Sent by the HFP device to indicate status
 		public static final int CMD_UNSOLICATED_IS = 0;		// Initialization complete
 		public static final int CMD_UNSOLICATED_IA = 1;		// HFP disconnect
 		public static final int CMD_UNSOLICATED_IB = 2;		// HFP connect

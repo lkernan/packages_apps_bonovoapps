@@ -23,7 +23,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.ToggleButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,6 +46,8 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 	private Button mBtnPhone = null;
 	private ImageButton mIgeBtnVolUp = null;
 	private ImageButton mIgeBtnVolDown = null;
+	
+	private ListView mPairedList = null;
 	
 	//private Button mBtnBtPower = null; 	//0718 ɾ��
 	private TextView mTvBtNameInfo = null;
@@ -85,6 +90,9 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 		mBtnPhone = (Button)findViewById(R.id.btnPhone);
 		mIgeBtnVolUp = (ImageButton)findViewById(R.id.btnVolAdd);
 		mIgeBtnVolDown = (ImageButton)findViewById(R.id.btnVolDown);
+		
+		// Paired devices listview
+		mPairedList = (ListView)findViewById(R.id.PairedList);
 		
 		mBtnPhone.setOnClickListener(this);
 		mIgeBtnVolUp.setOnClickListener(this);

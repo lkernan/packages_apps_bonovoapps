@@ -15,23 +15,6 @@
         android:src="@drawable/setting_music_bg" />
 
     <TextView
-        android:id="@+id/textViewPhoneLinkStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_marginLeft="460dp"
-        android:layout_marginRight="@dimen/text_link_status_phone_margin_right"
-        android:layout_marginTop="240dp"
-        android:background="#00000000"
-        android:text="@string/phone_link_status_closed"
-        android:textColor="#ffffffff"
-        android:textSize="25sp"
-        android:visibility="gone" />
-
-    <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,20 +52,6 @@
         android:textColor="#00BDFF"
         android:textSize="@dimen/title_text_size"
         android:textStyle="bold" />
-
-    <ToggleButton
-        android:id="@+id/swBtMusic"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_x="174dp"
-        android:layout_y="72dp" />
-
-    <ToggleButton
-        android:id="@+id/swBtStatus"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_x="174dp"
-        android:layout_y="122dp" />
 
     <ListView
         android:id="@+id/PairedList"
@@ -158,5 +127,34 @@
         android:layout_y="243dp"
         android:text="@string/bluetooth_pincode"
         android:textSize="25sp" />
+
+    <ToggleButton
+        android:id="@+id/swBtStatus"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_x="176dp"
+        android:layout_y="71dp" />
+
+    <ToggleButton
+        android:id="@+id/swBtMusic"
+        android:layout_width="88dp"
+        android:layout_height="wrap_content"
+        android:layout_x="176dp"
+        android:layout_y="124dp" />
+
+    <TextView
+        android:id="@+id/textViewPhoneLinkStatus"
+        android:layout_width="139dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="460dp"
+        android:layout_marginRight="@dimen/text_link_status_phone_margin_right"
+        android:layout_marginTop="240dp"
+        android:layout_x="491dp"
+        android:layout_y="18dp"
+        android:background="#00000000"
+        android:text="@string/phone_link_status_closed"
+        android:textColor="@color/darkgray"
+        android:textSize="15sp"
+        android:visibility="gone" />
 
 </AbsoluteLayout>
