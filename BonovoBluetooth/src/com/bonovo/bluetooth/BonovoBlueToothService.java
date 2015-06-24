@@ -132,7 +132,9 @@ public class BonovoBlueToothService extends Service {
 	private final static String ACTION_CALL_ENDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_CALL_ENDANDACCEPTCALLWAITING";
 	private final static String ACTION_CALL_HOLDANDACCEPTCALLWAITING = "android.intent.action.BONOVO_CALL_HOLDANDACCEPTCALLWAITING";
 	private final static String ACTION_CALL_MAKECONFERENCECALL = "android.intent.action.BONOVO_CALL_MAKECONFERENCECALL";
-
+	private final static String ACTION_CALL_VOICEDIAL = "android.intent.action.BONOVO_CALL_VOICEDIAL";
+	private final static String ACTION_CALL_VOICEDIAL_CANCEL = "android.intent.action.BONOVO_CALL_VOICEDIAL_CANCEL";
+	
     // onKeyEvent
     private final static String ACTION_KEY_BT = "android.intent.action.BONOVO_BT";
     private final static String ACTION_KEY_BT_ANSWER = "android.intent.action.BONOVO_BT_ANSWER";
@@ -201,6 +203,8 @@ public class BonovoBlueToothService extends Service {
 		myIntentFilter.addAction(ACTION_CALL_ENDANDACCEPTCALLWAITING);
 		myIntentFilter.addAction(ACTION_CALL_HOLDANDACCEPTCALLWAITING);
 		myIntentFilter.addAction(ACTION_CALL_MAKECONFERENCECALL);
+		myIntentFilter.addAction(ACTION_CALL_VOICEDIAL);
+		myIntentFilter.addAction(ACTION_CALL_VOICEDIAL_CANCEL);
 		return myIntentFilter;
 	};
 	
@@ -329,7 +333,12 @@ public class BonovoBlueToothService extends Service {
 			    if(getPhoneState() == PhoneState.ACTIVE){
 				    BlueToothPhoneRejectWaitingCall();
 			    }
+			}else if(action.equals(ACTION_CALL_VOICEDIAL)){
+				BlueToothPhoneVoiceDial();
+			}else if(action.equals(ACTION_CALL_VOICEDIAL_CANCEL)){
+				BlueToothPhoneVoiceDialCancel();
 			}
+
         }
 		
 	};
@@ -738,7 +747,21 @@ public class BonovoBlueToothService extends Service {
 	public void BlueToothPhoneConferenceCalls() {
 		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_CT);
 	}
-		
+	
+	/**
+	 * Start voice dial, activates voice commands on the connected phone (siri / ok google)
+	 */
+	public void BlueToothPhoneVoiceDial() {
+		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_CI);
+	}
+	
+	/**
+	 * Cancel the voice dial command
+	 */
+	public void BlueToothPhoneVoiceDialCancel() {
+		BonovoBlueToothSet(BonovoBlueToothRequestCmd.CMD_SOLICATED_CJ);
+	}
+	
 	/**
 	 * Set or check bt's name
 	 * @param name  if name is null,check bt's name. Otherwise set name.
@@ -1431,7 +1454,7 @@ public class BonovoBlueToothService extends Service {
         public final static String ACTION_PHONE_SIGNAL_LEVEL_CHANGED = "android.intent.action.PHONE_SIGNAL_LEVEL_CHANGED";
         public final static String ACTION_PHONE_BATTERY_LEVEL_CHANGED = "android.intent.action.PHONE_BATTERY_LEVEL_CHANGED";
         public final static String ACTION_PHONE_MUTE_STATE_CHANGED = "android.intent.action.PHONE_MUTE_STATE_CHANGED";
-
+        
 		public final static String NAME = "name";
 		public final static String VAL = "value";
 		public final static String LEVEL = "level";
