@@ -35,7 +35,6 @@ import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.media.AudioManager;
 
 public class BluetoothSettings extends Activity implements View.OnClickListener, View.OnLongClickListener{
 
@@ -149,7 +148,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 					mBtnMusicName.setVisibility(View.VISIBLE);//0825
 					
 				}else{
-					//δѡ��ʱ�����Ĳ���
 					mTvBtName.setVisibility(View.GONE);
 					mTvBtPin.setVisibility(View.GONE);
 					mTvBtNameInfo.setVisibility(View.GONE);
@@ -196,27 +194,20 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+
+		// Cancel pairing mode
+		mBtService.BlueToothCancelPairingMode();
+		
 		super.onDestroy();
 		Intent intent = new Intent();
 		intent.setClassName("com.bonovo.bluetooth", "com.bonovo.bluetooth.BonovoBlueToothService");
 		unbindService(mServiceConnection);
 		unregisterReceiver(mReceiver);
-		AudioManager audioManager = (AudioManager) this.getSystemService(AUDIO_SERVICE);
-		//注册接收的Receiver
-		ComponentName mRemoteControlClientReceiverComponent;
-		mRemoteControlClientReceiverComponent = new ComponentName(
-		                getPackageName(), BonovoBlueToothReceiver.class.getName());
-		audioManager.unregisterMediaButtonEventReceiver(mRemoteControlClientReceiverComponent);
 	}
 	
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		AudioManager audioManager = (AudioManager) this.getSystemService(AUDIO_SERVICE);
-		ComponentName mRemoteControlClientReceiverComponent;
-		mRemoteControlClientReceiverComponent = new ComponentName(
-				getPackageName(), BonovoBlueToothReceiver.class.getName());
-		audioManager.registerMediaButtonEventReceiver(mRemoteControlClientReceiverComponent);
 	}
 	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -241,6 +232,14 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 			mTvBtNameInfo.setText(mBtService.getBtName());
 			mTvBtPinInfo.setText(mBtService.getBtPinCode());
 			
+			// Fill the list of paired devices
+			ArrayAdapter<BonovoBlueToothService.PairedDevice> adapter = new ArrayAdapter<BonovoBlueToothService.PairedDevice>(mContext,
+				android.R.layout.simple_list_item_1, mBtService.pairedDevices);
+        
+			mPairedList.setAdapter(adapter);
+			
+			// Enter pairing mode
+			mBtService.BlueToothEnterPairingMode();
 		}
 	};
 
@@ -256,9 +255,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
         intentFilter.addAction(BonovoBlueToothData.ACTION_SEND_COMMANDER_ERROR);
 		intentFilter.addAction(BonovoBlueToothData.ACTION_BT_NAME);
 		intentFilter.addAction(BonovoBlueToothData.ACTION_BT_PINCODE);
-		intentFilter.addAction("BlueTooth.Media_Broadcast_Next");
-        intentFilter.addAction("BlueTooth.Media_Broadcast_Last");
-        intentFilter.addAction("BlueTooth.Media_Broadcast_Play_Pause");
         intentFilter.addAction("android.intent.action.ACTION_SHUTDOWN");
 		intentFilter.addAction("android.intent.action.BONOVO_SLEEP_KEY");
 		intentFilter.addAction("android.intent.action.BONOVO_WAKEUP_KEY");

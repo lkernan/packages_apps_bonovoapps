@@ -18,66 +18,67 @@
  
     </FrameLayout>
     
-    <ImageView 
-        android:id="@+id/imageViewBottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:src="@drawable/setting_bg_bottom_bar"
-        android:contentDescription="@string/description_bottom_bg"/>
-    
-    <LinearLayout 
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        
+        android:background="@color/settings_title_panel_color"
+        android:orientation="horizontal" >
+
         <Button
-	        android:id="@+id/btnPhone"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/description_phone_button"
-	        android:background="@drawable/setting_bottom_img"
-	        android:textColor="@android:color/white"
-	        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-	        style="@android:attr/buttonBarButtonStyle" />
-	    
-	    <Button
-	        android:id="@+id/btnSettings"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/description_settings_button"
-	        android:background="@drawable/setting_bottom_img"
-	        android:visibility="gone"
-	        android:textColor="@android:color/white"
-	        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-	        style="@android:attr/buttonBarButtonStyle" />
-	
-	</LinearLayout>
-		
-    <ImageButton
-        android:id="@+id/btnVolDown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/setting_volume_img"
-        android:src="@drawable/ic_sound_down"
-        android:contentDescription="@string/description_sub_volume" />
+            android:id="@+id/btnPhone"
+            style="@android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:background="@color/settings_title_panel_color"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:text="@string/description_phone_button"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="@android:color/white" />
 
-    <ImageButton
-        android:id="@+id/btnVolAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/btnVolDown"
-        android:background="@drawable/setting_volume_img"
-        android:contentDescription="@string/description_add_volume"
-        android:src="@drawable/ic_sound_up" />
-   
+        <Button
+            android:id="@+id/btnSettings"
+            style="@android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_bottom_img"
+            android:text="@string/description_settings_button"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
 
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4000"
+            android:background="@color/settings_title_panel_color" />
+
+        <ImageButton
+            android:id="@+id/btnVolDown"
+            android:layout_width="100dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:background="@color/settings_title_panel_color"
+            android:contentDescription="@string/description_sub_volume"
+            android:src="@drawable/ic_sound_down" />
+
+        <ImageButton
+            android:id="@+id/btnVolAdd"
+            android:layout_width="100dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:background="@color/settings_title_panel_color"
+            android:contentDescription="@string/description_add_volume"
+            android:src="@drawable/ic_sound_up" />
+
+    </LinearLayout>
     
 </RelativeLayout>

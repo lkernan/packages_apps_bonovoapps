@@ -148,4 +148,7 @@
 <color name="black">#000000</color><!--黑色 --> 
 <color name="people_app_theme_color">#33B5E5</color>
 <color name="incoming_number_color">#39CAFF</color>
+<color name="settings_title_panel_color">#373737</color>
+<color name="settings_left_panel_color">#242424</color>
+<color name="settings_right_panel_color">#101010</color>
 </resources>

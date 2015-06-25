@@ -57,7 +57,7 @@ const char *myBonovoBtSolicatedCmdArray[CMD_AT_MAX] = {
 		//5其他功能操作		 // 5 Other functional operation
 		"AT#CZ", "AT#CV", "AT#MY", "AT#MG", "AT#MH", "AT#MP", "AT#MQ", "AT#MF", "AT#MM", "AT#MN", "AT#MX", "AT#DA",
 		//added by leonkernan
-		"AT#CQ", "AT#CR", "AT#CS", "AT#CT", "AT#MZ", "AT#QD", "AT#QE", "AT#PP"};
+		"AT#CQ", "AT#CR", "AT#CS", "AT#CT", "AT#MZ", "AT#QD", "AT#QE", "AT#PP", "AT#MJ", "AT#QJ", "AT#QK"};
 
 unsigned int checkSum(unsigned char* cmdBuf, int size) {
 	unsigned int temp = 0;
@@ -216,11 +216,14 @@ void *thread_func_bluetooth_read(void *argv) {
 			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'F'){
 				android_callback(CMD_UNSOLICATED_PF, NULL, 0);
 			}
-			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] == 'B'){
-				android_callback(CMD_UNSOLICATED_QB, NULL, 0);
+			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='B'){    // Pairing success, returns MAC addr
+				android_callback(CMD_UNSOLICATED_QB, &myLineBuf[k+2], frameEnd-2);
 			}
-			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] == 'A'){
-				android_callback(CMD_UNSOLICATED_QA, NULL, 0);
+			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='A'){    // Pairing request, MAC addr and pin code
+				android_callback(CMD_UNSOLICATED_QA, &myLineBuf[k+2], frameEnd-2);
+			}
+			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='C'){    // Pairing failure, MAC addr
+				android_callback(CMD_UNSOLICATED_QC, &myLineBuf[k+2], frameEnd-2);
 			}
 			else if(myLineBuf[k] == 'C' && myLineBuf[k+1] == 'Z'){
 				android_callback(CMD_UNSOLICATED_CZ, NULL, 0);
@@ -278,12 +281,16 @@ void *thread_func_bluetooth_read(void *argv) {
 				android_callback(CMD_UNSOLICATED_MG, &myLineBuf[k+2], frameEnd-2);
 			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='H'){    // current Element Attributes Indication
 				android_callback(CMD_UNSOLICATED_MH, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='L'){    // current AVRCP status
+			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='J'){    // current AVRCP playing status
+				android_callback(CMD_UNSOLICATED_MJ, &myLineBuf[k+2], frameEnd-2);
+			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='L'){    // current AVRCP connection status
 				android_callback(CMD_UNSOLICATED_ML, &myLineBuf[k+2], frameEnd-2);
 			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='M'){    // model name
 				android_callback(CMD_UNSOLICATED_MM, &myLineBuf[k+2], frameEnd-2);
 			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='N'){    // model pair code
 				android_callback(CMD_UNSOLICATED_MN, &myLineBuf[k+2], frameEnd-2);
+			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='Q'){    // Remote Device Info (AG requesting to pair)
+				android_callback(CMD_UNSOLICATED_MQ, &myLineBuf[k+2], frameEnd-2);	
 			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='U'){    // current A2DP status
 				android_callback(CMD_UNSOLICATED_MU, &myLineBuf[k+2], frameEnd-2);
 			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='W'){    // model program version
