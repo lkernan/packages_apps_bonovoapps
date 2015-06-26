@@ -34,7 +34,7 @@
             android:gravity="end"
             android:text="@string/bluetooth_status_closed"
             android:textColor="@color/darkgrey"
-            android:textSize="15sp" />
+            android:textSize="@dimen/title_text_size" />
         
         <TextView
 	        android:id="@+id/textViewPhoneLinkStatus"
@@ -73,12 +73,13 @@
    				    android:background="#00000000"
    				    android:text="@string/description_switch_bt_status"
    				    android:textColor="#ffffffff"
-   				    android:textSize="20sp" />
+   				    android:textSize="@dimen/settings_standard_text_size" />
    				
    			    <ToggleButton
-        			android:id="@+id/swBtStatus"
-        			android:layout_width="88dp"
-        			android:layout_height="wrap_content"/>
+   			        android:id="@+id/swBtStatus"
+   			        android:layout_width="@dimen/switch_function_button_width"
+   			        android:layout_height="@dimen/switch_function_button_higth" />
+
 		    </TableRow>
 
 		    <TableRow
@@ -97,13 +98,14 @@
 		            android:background="#00000000"
 		            android:text="@string/description_switch_bt_music"
 		            android:textColor="#ffffffff"
-		            android:textSize="20sp"
+		            android:textSize="@dimen/settings_standard_text_size"
 		            android:visibility="visible" />
 		        
 		        <ToggleButton
-        			android:id="@+id/swBtMusic"
-        			android:layout_width="88dp"
-        			android:layout_height="wrap_content"/>
+		            android:id="@+id/swBtMusic"
+		            android:layout_width="@dimen/switch_function_button_width"
+		            android:layout_height="@dimen/switch_function_button_higth" />
+
 		    </TableRow>
 
 		    <TableRow
@@ -118,7 +120,7 @@
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:text="@string/bluetooth_name"
-		            android:textSize="20sp" />
+		            android:textSize="@dimen/settings_standard_text_size" />
 
     			<TextView
     			    android:id="@+id/textView2"
@@ -126,7 +128,7 @@
     			    android:layout_width="wrap_content"
     			    android:layout_height="wrap_content"
     			    android:text="@string/bluetooth_default_name"
-    			    android:textSize="20sp" />
+    			    android:textSize="@dimen/settings_standard_text_size" />
 
 		    </TableRow>
 
@@ -142,7 +144,7 @@
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:text="@string/bluetooth_pincode"
-				    android:textSize="20sp" />
+				    android:textSize="@dimen/settings_standard_text_size" />
 		        
 		        <TextView
 		            android:id="@+id/textView4"
@@ -150,7 +152,7 @@
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:text="@string/bluetooth_default_pincode"
-		            android:textSize="20sp" />
+		            android:textSize="@dimen/settings_standard_text_size" />
 	        
 		    </TableRow>
 		</TableLayout>
@@ -163,11 +165,11 @@
 		    android:padding="15dp" >
 		    
 			<TextView
-		        android:id="@+id/PairedDeviceHeading"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/setting_paired_device_heading"
-		        android:textAppearance="?android:attr/textAppearanceSmall" />
+			    android:id="@+id/PairedDeviceHeading"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/setting_paired_device_heading"
+			    android:textSize="@dimen/settings_small_text_size" />
 			
 			<ListView
 			    android:id="@+id/PairedList"
