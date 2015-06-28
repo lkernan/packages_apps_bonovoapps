@@ -1133,24 +1133,28 @@ public class BonovoBlueToothService extends Service {
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_MN param:" + param.substring(2));
 			myBtPinCode = param;
 
-		}else if(param.startsWith("MO")){
+		}else if(param.startsWith("MO0")){
 			// Speaker Anti-Pop function
-			if(DEB) Log.d(TAG, "Callback -->Speaker Anti-Pop (MO) param:" + param.substring(2));
-			if (param.substring(2) == "0"){
-				// disconnect speaker
-				if(mBtMusicIsEnable){
-					recoveryAudio(AudioLevel.CODEC_LEVEL_BT_MUSIC);
-				}
-				recoveryAudio(AudioLevel.CODEC_LEVEL_BT_TEL);
-				if(DEB) Log.d(TAG, "Bluetooth device disconnected from speaker.");
-			}else{
-				// reconnect speaker
-				if(mBtMusicIsEnable){
-					activeAudio(AudioLevel.CODEC_LEVEL_BT_MUSIC);
-				}
-				activeAudio(AudioLevel.CODEC_LEVEL_BT_TEL);
-				if(DEB) Log.d(TAG, "Bluetooth device reconnected to speaker.");
+			if(DEB) Log.d(TAG, "Callback -->Speaker Anti-Pop (MO0)");
+			
+			// disconnect speaker
+			if(mBtMusicIsEnable){
+				recoveryAudio(AudioLevel.CODEC_LEVEL_BT_MUSIC);
+ 			}
+					
+			recoveryAudio(AudioLevel.CODEC_LEVEL_BT_TEL);
+			if(DEB) Log.d(TAG, "Bluetooth device disconnected from speaker.");
+
+		}else if(param.startsWith("MO1")){
+			// Speaker Anti-Pop function
+			if(DEB) Log.d(TAG, "Callback -->Speaker Anti-Pop (MO1)");
+
+			// reconnect speaker
+			if(mBtMusicIsEnable){
+				activeAudio(AudioLevel.CODEC_LEVEL_BT_MUSIC);
 			}
+			activeAudio(AudioLevel.CODEC_LEVEL_BT_TEL);
+			if(DEB) Log.d(TAG, "Bluetooth device reconnected to speaker.");
 					
 		}else if(param.startsWith("MY")){	
 			if(DEB) Log.d(TAG, "Callback -->CMD_UNSOLICATED_MY");

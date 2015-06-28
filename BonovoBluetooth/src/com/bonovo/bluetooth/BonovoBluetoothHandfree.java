@@ -167,6 +167,12 @@ public class BonovoBluetoothHandfree extends Activity
 
 					}else if(BonovoBlueToothService.PhoneState.DIALING == phoneState){
 						requestAudioFocus();
+						
+						// If we've switched calls quickly, a hangup message may still be pending.
+						//   If so, remove it so the new call display doesn't get removed.
+						mHandler.removeMessages(MSG_DIAL_HANG_UP);
+						mHandler.removeMessages(MSG_DIAL_FINISH_ACTIVITY);
+						
 						setView(phoneLayouts.PHONE_RINGING_OUT);
 						
 						if(number != null) {
