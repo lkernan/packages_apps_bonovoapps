@@ -142,6 +142,12 @@ public class BonovoBluetoothHandfree extends Activity
 						
 					}else if(BonovoBlueToothService.PhoneState.RINGING == phoneState){
 						requestAudioFocus();
+						
+						// If we've switched calls quickly, a hangup message may still be pending.
+						//   If so, remove it so the new call display doesn't get removed.
+						mHandler.removeMessages(MSG_DIAL_HANG_UP);
+						mHandler.removeMessages(MSG_DIAL_FINISH_ACTIVITY);
+						
 						setView(phoneLayouts.PHONE_RINGING_IN);
 						
 						if(number != null) {
@@ -360,17 +366,14 @@ public class BonovoBluetoothHandfree extends Activity
 			
 			switch (what) {
 			case MSG_DIAL_HANG_UP:{
-				// Don't hang up if the call is ongoing, we might have switched from a voice command to active call
-				if(myBlueToothService.getPhoneState() != BonovoBlueToothService.PhoneState.ACTIVE) {
-					if(mCallTime != null){
-						mCallTime.setText(R.string.description_phone_hang_up);
-					
-						mDigits.setText(mCallNumber.getText());
-						mDigits.setSelection(mDigits.getText().length());
-					}
-					abandonAudioFocus();
-					mHandler.sendEmptyMessageDelayed(MSG_DIAL_FINISH_ACTIVITY, DELAY_TIME_FINISH);
+				if(mCallTime != null){
+					mCallTime.setText(R.string.description_phone_hang_up);
+				
+					mDigits.setText(mCallNumber.getText());
+					mDigits.setSelection(mDigits.getText().length());
 				}
+				abandonAudioFocus();
+				mHandler.sendEmptyMessageDelayed(MSG_DIAL_FINISH_ACTIVITY, DELAY_TIME_FINISH);
 			}
 			break;
 			

@@ -33,7 +33,7 @@
 #define IOCTL_HANDLE_CODEC_INIT             _IO(HANDLE_CTRL_DEV_MAJOR, 32)
 #define CODEC_DEFAULT_SOURCE                CODEC_LEVEL_NO_ANALOG
 
-void android_callback(int cmd, char* param, int len);
+void android_callback(char* param, int len);
 int set_bonovo_bluetooth_power(int onOff);
 
 int bonovo_bluetooth_thread_status = 0;
@@ -185,139 +185,10 @@ void *thread_func_bluetooth_read(void *argv) {
 			}
 
 			LOGD("+++ myLineBuf[%d]:%s", k, &myLineBuf[k]);
-			if(strncmp(&myLineBuf[k], "IA\r\n", 4) == 0){
-				android_callback(CMD_UNSOLICATED_IA, NULL, 0);
-				// recoverAudio(CODEC_LEVEL_BT_TEL);
-			}
-			else if(strncmp(&myLineBuf[k], "IB\r\n", 4) == 0){
-				android_callback(CMD_UNSOLICATED_IB, NULL, 0);
-			}
-			else if(myLineBuf[k] == 'M' && myLineBuf[k+1] == 'A'){
-				android_callback(CMD_UNSOLICATED_MA, NULL, 0);
-				// recoverAudio(CODEC_LEVEL_BT_MUSIC);
-			}
-			else if(myLineBuf[k] == 'M' && myLineBuf[k+1] == 'B'){
-				android_callback(CMD_UNSOLICATED_MB, NULL, 0);
-				// activeAudio(CODEC_LEVEL_BT_MUSIC);
-			}
-			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'N'){
-				android_callback(CMD_UNSOLICATED_PN, NULL, 0);
 
-            }else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'A'){
-                android_callback(CMD_UNSOLICATED_PA, &myLineBuf[k+2], frameEnd-2);
-			}
-			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'B'){
-				LOGD("{myLineBuf =%s frameEnd =%d}",myLineBuf,frameEnd);
-                android_callback(CMD_UNSOLICATED_PB, &myLineBuf[k+2], frameEnd-2);
-			}
-			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'C'){
-				android_callback(CMD_UNSOLICATED_PC, NULL, 0);
-			}
-			else if(myLineBuf[k] == 'P' && myLineBuf[k+1] == 'F'){
-				android_callback(CMD_UNSOLICATED_PF, NULL, 0);
-			}
-			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='B'){    // Pairing success, returns MAC addr
-				android_callback(CMD_UNSOLICATED_QB, &myLineBuf[k+2], frameEnd-2);
-			}
-			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='A'){    // Pairing request, MAC addr and pin code
-				android_callback(CMD_UNSOLICATED_QA, &myLineBuf[k+2], frameEnd-2);
-			}
-			else if(myLineBuf[k] == 'Q' && myLineBuf[k+1] =='C'){    // Pairing failure, MAC addr
-				android_callback(CMD_UNSOLICATED_QC, &myLineBuf[k+2], frameEnd-2);
-			}
-			else if(myLineBuf[k] == 'C' && myLineBuf[k+1] == 'Z'){
-				android_callback(CMD_UNSOLICATED_CZ, NULL, 0);
-			}
-			//*************** add by bonovo zbiao
-			else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='C'){     // calling
-//				LOGD("======zbiao CMD_UNSOLICATED_IC 0");
-				android_callback(CMD_UNSOLICATED_IC, NULL, 0);
-				// activeAudio(CODEC_LEVEL_BT_TEL);
+			// Send the data through to the callback
+            android_callback(&myLineBuf[k], frameEnd);
 
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='D'){    // call number
-//				LOGD("======zbiao CMD_UNSOLICATED_ID 0");
-				android_callback(CMD_UNSOLICATED_ID, &myLineBuf[k+2], frameEnd-2);
-				// activeAudio(CODEC_LEVEL_BT_TEL);
-
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='F'){    // call hung up
-				android_callback(CMD_UNSOLICATED_IF, NULL, 0);
-				// recoverAudio(CODEC_LEVEL_BT_TEL);
-
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='G'){    // pick up the call
-				android_callback(CMD_UNSOLICATED_IG, NULL, 0);
-				// activeAudio(CODEC_LEVEL_BT_TEL);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='I'){    // enter pairing
-				android_callback(CMD_UNSOLICATED_II, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='J'){    // end pairing
-				android_callback(CMD_UNSOLICATED_IJ, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='K'){    // call waiting
-				android_callback(CMD_UNSOLICATED_IK, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='L'){    // hold active and accept call waiting
-				android_callback(CMD_UNSOLICATED_IL, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='N'){    // end active and accept call waiting
-				android_callback(CMD_UNSOLICATED_IN, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='M'){    // conference call
-				android_callback(CMD_UNSOLICATED_IM, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='Q'){    // incoming call with name
-				android_callback(CMD_UNSOLICATED_IQ, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='R'){    // current call number
-				android_callback(CMD_UNSOLICATED_IR, &myLineBuf[k+2], frameEnd-2);
-				// activeAudio(CODEC_LEVEL_BT_TEL);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='T'){    // released active and switched to call waiting
-				android_callback(CMD_UNSOLICATED_IT, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='V'){    // connecting
-				android_callback(CMD_UNSOLICATED_IV, NULL, 0);
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='U'){    // signal strength
-				android_callback(CMD_UNSOLICATED_IU, &myLineBuf[k+2], 1); // returns int between 0 and 5
-			}else if(myLineBuf[k] == 'I' && myLineBuf[k+1] =='X'){    // battery level
-				android_callback(CMD_UNSOLICATED_IX, &myLineBuf[k+2], 1); // returns int between 0 and 5
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='C'){    // audio connect
-				android_callback(CMD_UNSOLICATED_MC, NULL, 0);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='D'){    // audio disconnect
-				android_callback(CMD_UNSOLICATED_MD, NULL, 0);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='F'){    // auto response && auto connect status
-				android_callback(CMD_UNSOLICATED_MF, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='G'){    // current HFP status
-				android_callback(CMD_UNSOLICATED_MG, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='H'){    // current Element Attributes Indication
-				android_callback(CMD_UNSOLICATED_MH, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='J'){    // current AVRCP playing status
-				android_callback(CMD_UNSOLICATED_MJ, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='L'){    // current AVRCP connection status
-				android_callback(CMD_UNSOLICATED_ML, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='M'){    // model name
-				android_callback(CMD_UNSOLICATED_MM, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='N'){    // model pair code
-				android_callback(CMD_UNSOLICATED_MN, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='Q'){    // Remote Device Info (AG requesting to pair)
-				android_callback(CMD_UNSOLICATED_MQ, &myLineBuf[k+2], frameEnd-2);	
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='U'){    // current A2DP status
-				android_callback(CMD_UNSOLICATED_MU, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='W'){    // model program version
-				android_callback(CMD_UNSOLICATED_MW, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='X'){    // model pair history
-				android_callback(CMD_UNSOLICATED_MX, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'M' && myLineBuf[k+1] =='Y'){    // A2DP disconnect
-				android_callback(CMD_UNSOLICATED_MY, NULL, 0);
-				// recoverAudio(CODEC_LEVEL_BT_TEL);
-
-			}else if(myLineBuf[k] == 'P' && myLineBuf[k+1] =='E'){    // voice dialing start
-				android_callback(CMD_UNSOLICATED_PE, NULL, 0);
-			}else if(myLineBuf[k] == 'P' && myLineBuf[k+1] =='F'){    // voice dialing stop
-				android_callback(CMD_UNSOLICATED_PF, NULL, 0);
-			}else if(myLineBuf[k] == 'P' && myLineBuf[k+1] =='M'){    // SPP Connected or SPP data received
-				android_callback(CMD_UNSOLICATED_PM, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'P' && myLineBuf[k+1] =='V'){    // network operator name
-				android_callback(CMD_UNSOLICATED_PV, &myLineBuf[k+2], frameEnd-2);
-			}else if(myLineBuf[k] == 'O' && myLineBuf[k+1] =='K'){    // execute command successfully
-				android_callback(CMD_UNSOLICATED_OK, NULL, 0);
-			}else if(!strncmp(myLineBuf, "ERROR", 5)){                // execute command failed
-				android_callback(CMD_UNSOLICATED_ERROR, NULL, 0);
-			}else if(!strncmp(myLineBuf, "IO0", 3)){
-				android_callback(CMD_UNSOLICATED_IO0, NULL, 0);          // mute false
-			}else if(!strncmp(myLineBuf, "IO1", 3)){
-				android_callback(CMD_UNSOLICATED_IO1, NULL, 0);          // mute true
-			}
 		}
 	}
 

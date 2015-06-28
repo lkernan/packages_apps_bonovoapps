@@ -25,7 +25,7 @@ int recoverAudio(CODEC_Level codec_mode);
 extern char myIncoingCallNumber[];
 extern int myIncomingCallLen;
 #define MAX_BUFF_LEN 50
-void android_callback(int cmd, char* param, int len) {
+void android_callback(char* param, int len) {
 	int status;
 	JNIEnv *env;
 //	char buf[MAX_BUFF_LEN];
@@ -38,12 +38,8 @@ void android_callback(int cmd, char* param, int len) {
 	}
 	jstring str_param;
 
-	if(param != NULL){
-		str_param = env->NewStringUTF(param);
-	}else{
-		str_param = env->NewStringUTF("NULL");
-	}
-	env->CallVoidMethod(gBonovoBlueToothObj, method_report, cmd, str_param);
+	str_param = env->NewStringUTF(param);
+	env->CallVoidMethod(gBonovoBlueToothObj, method_report, str_param);
     gJavaVM->DetachCurrentThread();
 }
 
@@ -53,7 +49,7 @@ static void android_bonovo_bluetooth_init(JNIEnv* env, jobject thiz) {
 	}
 
 	jclass interfaceClass = env->GetObjectClass(gBonovoBlueToothObj);
-	method_report = env->GetMethodID(interfaceClass, "BlueToothCallback","(ILjava/lang/String;)V");
+	method_report = env->GetMethodID(interfaceClass, "BlueToothCallback","(Ljava/lang/String;)V");
 
 	start_bonovo_bluetooth();
 }

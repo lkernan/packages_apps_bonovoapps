@@ -28,7 +28,7 @@
     <dimen name="call_info_top_margin">10dp</dimen>
     <dimen name="dialog_bt_info_left_margin">8dp</dimen>
     <dimen name="dialog_bt_info_right_margin">8dp</dimen>
-    <dimen name="switch_function_button_width">200dp</dimen>
+    <dimen name="switch_function_button_width">100dp</dimen>
     <dimen name="switch_function_button_higth">66px</dimen>
     <dimen name="volume_button_width">105px</dimen>
     <dimen name="volume_button_hight">66px</dimen>

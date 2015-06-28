@@ -253,8 +253,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
         intentFilter.addAction(BonovoBlueToothData.ACTION_SYNC_CONTACTS_TIMEOUT);
         intentFilter.addAction(BonovoBlueToothData.ACTION_SYNC_CONTACTS_NOT_SUPPORT);
         intentFilter.addAction(BonovoBlueToothData.ACTION_SEND_COMMANDER_ERROR);
-		intentFilter.addAction(BonovoBlueToothData.ACTION_BT_NAME);
-		intentFilter.addAction(BonovoBlueToothData.ACTION_BT_PINCODE);
         intentFilter.addAction("android.intent.action.ACTION_SHUTDOWN");
 		intentFilter.addAction("android.intent.action.BONOVO_SLEEP_KEY");
 		intentFilter.addAction("android.intent.action.BONOVO_WAKEUP_KEY");
@@ -274,36 +272,6 @@ public class BluetoothSettings extends Activity implements View.OnClickListener,
 				}
 			}else if(BonovoBlueToothData.ACTION_SEND_COMMANDER_ERROR.equals(action)){
 				if(DEBUG) Log.e(TAG, "send bluetooth commander error!!!");
-            }else if(BonovoBlueToothData.ACTION_BT_NAME.equals(action)){
-				String name = intent.getStringExtra(BonovoBlueToothService.BonovoBlueToothData.ACTION_INFO_BT_NAME);
-				if(name != null && mTvBtNameInfo != null){
-					mTvBtNameInfo.setText(name);
-					if(mBtService != null && !name.equals(mBtService.getBtName())){
-						if(mReadBtNameTime < MAX_READ_TIME){
-							Message msgUpdateName = mHandler.obtainMessage(MSG_UPDATA_BT_NAME, mBtService.getBtName());
-							mHandler.sendMessage(msgUpdateName);
-							mReadBtNameTime++;
-						}else{
-							mReadBtNameTime = 0;
-							Toast.makeText(mContext, R.string.description_updata_name_fail, Toast.LENGTH_SHORT).show();
-						}
-					}
-				}
-			} else if(BonovoBlueToothData.ACTION_BT_PINCODE.equals(action)){
-				String pincode = intent.getStringExtra(BonovoBlueToothService.BonovoBlueToothData.ACTION_INFO_BT_PINCODE);
-				if(pincode != null && mTvBtPinInfo != null){
-					mTvBtPinInfo.setText(pincode);
-					if(mBtService != null && !pincode.equals(mBtService.getBtPinCode())){
-						if(mReadBtPinTime < MAX_READ_TIME){
-							Message msgUpdateName = mHandler.obtainMessage(MSG_UPDATA_BT_PIN, mBtService.getBtPinCode());
-							mHandler.sendMessage(msgUpdateName);
-							mReadBtPinTime++;
-						}else{
-							mReadBtPinTime = 0;
-							Toast.makeText(mContext, R.string.description_updata_pin_fail, Toast.LENGTH_SHORT).show();
-						}
-					}
-				}
 			}else if(action.equals("android.intent.action.BONOVO_SLEEP_KEY")
                || action.equals("android.intent.action.ACTION_SHUTDOWN")){
 				mTvBtStatus.setText(R.string.bluetooth_status_closed);
