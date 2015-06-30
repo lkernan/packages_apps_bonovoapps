@@ -4,7 +4,6 @@ package com.bonovo.mcuupdate_and_setting;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ public class RightFragmentStandby extends Fragment {
 	private SharedPreferences preferences;
 	
 	private int checkFlag;
-	private int cs_checkFlag;
 	private Boolean switchCheckFlag;
 	
 	private final int HALF_HOUR_TIME= 30;
@@ -34,16 +32,7 @@ public class RightFragmentStandby extends Fragment {
 	private final int TWO_DAY_TIME= 2880;
 	private final int NO_STANDBY_TIME= 0;
 	private final int INFINITE_STANDBY= 65535;
-
-	// Connected Standby delay times (in minutes)
-	private final int CS_OFF= 0;
-	private final int CS_TEN_MIN= 10;
-	private final int CS_ONE_HOUR= 60;
-	private final int CS_FOUR_HOURS= 240;
-	private final int CS_HALF_DAY= 720;
-	private final int CS_ONE_DAY= 1440;
-	private final int CS_INFINITE= 65535;
-
+	
 	private RadioGroup radioGroup;
 	private RadioButton halfHourBtn;
 	private RadioButton oneHourBtn;
@@ -53,15 +42,6 @@ public class RightFragmentStandby extends Fragment {
 	private RadioButton twoDayBtn;
 	private RadioButton noStandbyBtn;
 	private RadioButton infiniteStandbyBtn;
-
-	private RadioGroup csRadioGroup;
-	private RadioButton csOffBtn;
-	private RadioButton csTenMinBtn;
-	private RadioButton csOneHourBtn;
-	private RadioButton csFourHoursBtn;
-	private RadioButton csHalfDayBtn;
-	private RadioButton csOneDayBtn;
-	private RadioButton csInfiniteBtn;
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -90,15 +70,6 @@ public class RightFragmentStandby extends Fragment {
 		noStandbyBtn = (RadioButton)view.findViewById(R.id.no_hour);
 		infiniteStandbyBtn = (RadioButton)view.findViewById(R.id.infinite);
 		
-		csRadioGroup = (RadioGroup)view.findViewById(R.id.connectedStandbyGroup);
-		csOffBtn = (RadioButton)view.findViewById(R.id.cs_off);
-		csTenMinBtn = (RadioButton)view.findViewById(R.id.cs_ten_minutes);
-		csOneHourBtn = (RadioButton)view.findViewById(R.id.cs_one_hour);
-		csFourHoursBtn = (RadioButton)view.findViewById(R.id.cs_four_hours);
-		csHalfDayBtn = (RadioButton)view.findViewById(R.id.cs_half_day);
-		csOneDayBtn = (RadioButton)view.findViewById(R.id.cs_one_day);
-		csInfiniteBtn = (RadioButton)view.findViewById(R.id.cs_infinite);
-
 		readSharePreConfig();
 		checkRadioButton();
 		
@@ -149,60 +120,7 @@ public class RightFragmentStandby extends Fragment {
 							   .putInt("standby checked", checkFlag)
 							   .commit();
 				}
-
 				backStandby.setStandby(checkFlag);
-
-			}
-		});
-		
-		csRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				// TODO Auto-generated method stub
-				preferences = context.getSharedPreferences("standby model", Context.MODE_PRIVATE);
-
-				if (checkedId == csOffBtn.getId()) {
-					cs_checkFlag = CS_OFF;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csTenMinBtn.getId()) {
-					cs_checkFlag = CS_TEN_MIN;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csOneHourBtn.getId()) {
-					cs_checkFlag = CS_ONE_HOUR;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csFourHoursBtn.getId()) {
-					cs_checkFlag = CS_FOUR_HOURS;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csHalfDayBtn.getId()) {
-					cs_checkFlag = CS_HALF_DAY;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csOneDayBtn.getId()) {
-					cs_checkFlag = CS_ONE_DAY;
-					preferences.edit()
-					   		   .putInt("cs checked", cs_checkFlag)
-					   		   .commit();
-				}else if (checkedId == csInfiniteBtn.getId()) {
-					checkFlag = CS_INFINITE;
-					preferences.edit()
-							   .putInt("cs checked", cs_checkFlag)
-							   .commit();
-				}
-
-				// Send the new value to the broadcastlistener in bonovoHandle, which will make sure it's saved 
-		        Intent intent = new Intent("android.intent.action.BONOVO_SET_CONNECTED_SLEEP_TIME");
-		        intent.putExtra("minutes", cs_checkFlag);
-		        context.sendBroadcast(intent);
 
 			}
 		});
@@ -228,7 +146,6 @@ public class RightFragmentStandby extends Fragment {
 		// TODO Auto-generated method stub
 		preferences = context.getSharedPreferences("standby model", Context.MODE_WORLD_READABLE);
 		checkFlag = preferences.getInt("standby checked", TWO_HOUR_TIME);	//默认全局变量为PRESSHOST
-		cs_checkFlag = preferences.getInt("cs checked", CS_OFF);
 		switchCheckFlag = preferences.getBoolean("switch_checked", false);
 	}
 	
@@ -254,22 +171,7 @@ public class RightFragmentStandby extends Fragment {
 		}else if (checkFlag == INFINITE_STANDBY) {
 			infiniteStandbyBtn.setChecked(true);
 		}
-
-		if(cs_checkFlag == CS_OFF){
-			csOffBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_TEN_MIN) {
-			csTenMinBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_ONE_HOUR) {
-			csOneHourBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_FOUR_HOURS) {
-			csFourHoursBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_HALF_DAY) {
-			csHalfDayBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_ONE_DAY) {
-			csOneDayBtn.setChecked(true);
-		}else if (cs_checkFlag == CS_INFINITE) {
-			csInfiniteBtn.setChecked(true);
-		}
+		
 	}
 	
 	public interface CallBackStandby{
